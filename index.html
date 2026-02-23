@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DR-navigator – Fasab / Softronic</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --bg:#f5f4f0; --white:#fff; --border:#dbd7ce; --border2:#c8c3b8;
+    --text:#1a1713; --muted:#7a7468; --muted2:#b5b0a6; --ink:#1a1713;
+    --m365:#1a56db; --m365-bg:#eff4ff; --m365-bd:#c3d3f7;
+    --dv:#6c2bd9; --dv-bg:#f5f0ff; --dv-bd:#d9c8f5;
+    --green:#166534; --green-bg:#f0fdf4; --green-bd:#86efac;
+    --red:#991b1b; --red-bg:#fff1f1; --red-bd:#fca5a5;
+    --amber:#92400e; --amber-bg:#fffbeb; --amber-bd:#fcd34d;
+    --tag-op-bg:#edfaf3; --tag-op:#0d6640; --tag-op-bd:#9de5c0;
+    --tag-rw-bg:#fff7ed; --tag-rw:#9a3412; --tag-rw-bd:#fed7aa;
+    --tag-ex-bg:#fff1f1; --tag-ex:#991b1b; --tag-ex-bd:#fca5a5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.65;}
+  header{background:var(--ink);color:#f5f4f0;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;letter-spacing:.04em;}
+  .h-sep{width:1px;height:14px;background:#3e3b36;margin:0 14px;}
+  .h-title{font-size:13px;color:#8a8480;}
+  .h-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5a5450;}
+  .wrap{max-width:860px;margin:0 auto;padding:44px 32px 80px;}
+
+  /* STEPPER */
+  .stepper{display:flex;align-items:center;margin-bottom:36px;}
+  .stp{display:flex;align-items:center;gap:7px;}
+  .stp-n{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;transition:all .15s;}
+  .stp-l{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;}
+  .stp.done   .stp-n{background:var(--muted);border:1px solid var(--muted);color:#fff;}
+  .stp.done   .stp-l{color:var(--muted);}
+  .stp.active .stp-n{background:var(--ink);border:1px solid var(--ink);color:#f5f4f0;}
+  .stp.active .stp-l{color:var(--ink);}
+  .stp.future .stp-n{background:var(--bg);border:1px solid var(--muted2);color:var(--muted2);}
+  .stp.future .stp-l{color:var(--muted2);}
+  .stp-line{flex:1;height:1px;background:var(--border);margin:0 10px;min-width:20px;}
+
+  .screen{display:none;}.screen.active{display:block;}
+  .qlabel{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .qtitle{font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;margin-bottom:8px;line-height:1.3;}
+  .qsub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+
+  /* S1 SYSTEM CARDS */
+  .sys-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .sys-card{background:var(--white);border:2px solid var(--border);border-radius:10px;padding:20px;cursor:pointer;transition:all .15s;}
+  .sys-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+  .sys-card.selected{border-color:var(--ink);}
+  .sys-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px;}
+  .sys-m365 .sys-icon{background:var(--m365-bg);}
+  .sys-dv   .sys-icon{background:var(--dv-bg);}
+  .sys-name{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+  .sys-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+  /* S2 SCENARIO CHECKBOXES */
+  .scen-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+  .scen-row{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:12px;transition:border-color .12s;}
+  .scen-row:hover{border-color:var(--border2);}
+  .scen-row.checked{border-color:var(--ink);background:#faf9f7;}
+  .cb{width:18px;height:18px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .scen-row.checked .cb{background:var(--ink);border-color:var(--ink);}
+  .scen-row.checked .cb::after{content:'✓';color:#fff;font-size:11px;font-weight:700;}
+  .scen-text{}
+  .scen-name{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:2px;}
+  .scen-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+  .scen-level{display:inline-block;padding:1px 7px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.06em;margin-top:5px;}
+  .lv-op{background:var(--tag-op-bg);color:var(--tag-op);border:1px solid var(--tag-op-bd);}
+  .lv-rw{background:var(--tag-rw-bg);color:var(--tag-rw);border:1px solid var(--tag-rw-bd);}
+  .lv-ex{background:var(--tag-ex-bg);color:var(--tag-ex);border:1px solid var(--tag-ex-bd);}
+
+  .btn-primary{background:var(--ink);color:#f5f4f0;border:none;border-radius:6px;padding:12px 24px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-weight:500;transition:opacity .15s;}
+  .btn-primary:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-primary:not(:disabled):hover{opacity:.82;}
+
+  /* S3 RESULT */
+  .bc{display:flex;align-items:center;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+  .bc-tag{display:inline-block;padding:2px 9px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.05em;}
+  .bc-m365{background:var(--m365-bg);color:var(--m365);border:1px solid var(--m365-bd);}
+  .bc-dv  {background:var(--dv-bg);color:var(--dv);border:1px solid var(--dv-bd);}
+  .bc-sep{color:var(--muted2);font-size:12px;}
+  .bc-scen{background:#f0f0ec;color:var(--muted);border:1px solid var(--border);font-size:9px;}
+
+  .rtitle{font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.02em;margin-bottom:4px;}
+  .rsub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+
+  .rsec{margin-bottom:24px;}
+  .rslabel{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+  .rslabel::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* SOL CARD */
+  .sol{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:10px;}
+  .sol-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .sol-name{font-size:15px;font-weight:600;color:var(--ink);}
+  .sol-levels{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+  .sol-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+  .sol-meta{display:flex;gap:20px;flex-wrap:wrap;}
+  .kv{display:flex;flex-direction:column;gap:2px;}
+  .kk{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);}
+  .kv-v{font-size:13px;font-weight:500;color:var(--ink);}
+  .doc-link{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m365);text-decoration:none;padding:3px 8px;border:1px solid var(--m365-bd);border-radius:4px;background:var(--m365-bg);margin-top:10px;}
+  .doc-link:hover{background:var(--m365-bd);}
+
+  /* SCEN SUMMARY */
+  .scen-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .ss-block{border-radius:8px;padding:14px 16px;}
+  .ss-block.green{background:var(--green-bg);border:1.5px solid var(--green-bd);}
+  .ss-block.red  {background:var(--red-bg);  border:1.5px solid var(--red-bd);}
+  .ss-head{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .ss-head.green{color:var(--green);}
+  .ss-head.red  {color:var(--red);}
+  .ss-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .dot-g{background:var(--green);}
+  .dot-r{background:var(--red);}
+  .ss-item{display:flex;align-items:flex-start;gap:7px;font-size:12px;margin-bottom:5px;line-height:1.5;}
+  .ss-item:last-child{margin-bottom:0;}
+  .ss-item.green{color:#14532d;}
+  .ss-item.red  {color:#7f1d1d;}
+  .ss-mk{font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0;margin-top:1px;}
+  .ss-mk.green{color:var(--green);}
+  .ss-mk.red  {color:var(--red);}
+
+  /* GAP */
+  .gap{background:var(--amber-bg);border:1.5px solid var(--amber-bd);border-radius:8px;padding:14px 18px;margin-bottom:10px;}
+  .gap-t{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;}
+  .gap-d{font-size:13px;color:#78350f;line-height:1.6;}
+  .gap-link{display:inline-block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--m365);text-decoration:none;}
+  .gap-link:hover{text-decoration:underline;}
+
+  .reset-btn{margin-top:28px;background:none;border:1.5px solid var(--border);border-radius:6px;padding:9px 18px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;}
+  .reset-btn:hover{border-color:var(--ink);color:var(--ink);}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;">
+    <span class="logo">Softronic</span>
+    <div class="h-sep"></div>
+    <span class="h-title">DR-navigator – Fasab</span>
+  </div>
+  <span class="h-meta">Arbetsversion feb 2026</span>
+</header>
+
+<div class="wrap">
+  <div class="stepper" id="stepper">
+    <div class="stp active"  id="stp1"><div class="stp-n">1</div><div class="stp-l">Vad</div></div>
+    <div class="stp-line"></div>
+    <div class="stp future" id="stp2"><div class="stp-n">2</div><div class="stp-l">Scenarier</div></div>
+    <div class="stp-line"></div>
+    <div class="stp future" id="stp3"><div class="stp-n">3</div><div class="stp-l">Lösning</div></div>
+  </div>
+
+  <!-- S1: VAD -->
+  <div class="screen active" id="s1">
+    <div class="qlabel">Steg 1 av 2</div>
+    <div class="qtitle">Vad ska skyddas?</div>
+    <div class="qsub">Välj system eller plattform.</div>
+    <div class="sys-cards">
+      <div class="sys-card sys-m365" onclick="pickSys('m365')">
+        <div class="sys-icon">📄</div>
+        <div class="sys-name">Microsoft 365</div>
+        <div class="sys-desc">SharePoint, OneDrive och Exchange Online. Totalt ca 18 TB.</div>
+      </div>
+      <div class="sys-card sys-dv" onclick="pickSys('dv')">
+        <div class="sys-icon">🗄️</div>
+        <div class="sys-name">Dynamics 365 och Power Platform</div>
+        <div class="sys-desc">Dataverse, Power Apps, Power Automate. Max ca 800 GB, varav ca 30% är unik data.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: SCENARIER -->
+  <div class="screen" id="s2">
+    <div class="qlabel">Steg 2 av 2</div>
+    <div class="qtitle">Vilka scenarier ska vi skydda mot?</div>
+    <div class="qsub">Välj en eller flera.</div>
+    <div class="scen-list" id="scen-list"></div>
+    <button class="btn-primary" id="scen-btn" onclick="showResult()" disabled>Visa lösning</button>
+  </div>
+
+  <!-- S3: RESULTAT -->
+  <div class="screen" id="s3">
+    <div class="bc" id="bc3"></div>
+    <div class="rtitle" id="rtitle"></div>
+    <div class="rsub" id="rsub"></div>
+    <div id="rbody"></div>
+    <button class="reset-btn" onclick="reset()">Börja om</button>
+  </div>
+</div>
+
+<script>
+const st = { sys: null, scens: [] };
+
+// ── DATA ──
+const SCENS = {
+  m365: [
+    {
+      id:'op1',
+      level:'op',
+      name:'Oavsiktlig radering eller korruption',
+      desc:'En användare eller admin råkar ta bort filer, ett bibliotek eller en hel site. Kan också vara korruption via ett Microsoft-fel.'
+    },{
+      id:'op2',
+      level:'op',
+      name:'Felkonfiguration hos oss eller er',
+      desc:'En felaktig ändring av behörigheter, policys eller inställningar gör data otillgänglig eller exponerad. Kan drabba enstaka filer eller hela siter.'
+    },{
+      id:'rw1',
+      level:'rw',
+      name:'Komprometterat konto med snabb attack',
+      desc:'Ett konto med höga behörigheter kapas och angriparen raderar eller krypterar data. Attacken sker inom några dagar och fångas av versionshistorik eller kort retention.'
+    },{
+      id:'rw2',
+      level:'rw',
+      name:'Ransomware med lång inkubationstid',
+      desc:'Angriparen är inne i miljön under veckor eller månader innan krypteringen aktiveras. Microsofts inbyggda skydd räcker inte. Kräver extern immutable backup med lång retention.'
+    },{
+      id:'ex1',
+      level:'ex',
+      name:'Microsoft-molnet otillgängligt',
+      desc:'Microsoft-tjänsterna är nere för överskådlig tid på grund av sanktioner, avtalsstopp eller en utbredd attack. Rådata behöver finnas externt för att vi ska kunna arbeta alls.'
+    }
+  ],
+  dv: [
+    {
+      id:'op3',
+      level:'op',
+      name:'Oavsiktlig radering eller korrupt miljö',
+      desc:'En felaktig bulk-operation, Power Automate-koppling eller admin-åtgärd förstör data i en Dataverse-miljö. Microsofts inbyggda backup täcker upp till 28 dagar bakåt.'
+    },{
+      id:'op4',
+      level:'op',
+      name:'Felkonfiguration i Power Platform',
+      desc:'En app, ett flöde eller en miljöinställning konfigureras fel och förstör eller låser data. Återställning sker via systembackup till sandbox.'
+    },{
+      id:'rw3',
+      level:'rw',
+      name:'Komprometterat konto, manipulation under lång tid',
+      desc:'Angriparen modifierar poster löpande under längre tid än 28 dagar. Inbyggd backup täcker inte. Det är det tydligaste gapet i Dataverse-skyddet idag.'
+    },{
+      id:'ex2',
+      level:'ex',
+      name:'Power Platform otillgängligt',
+      desc:'Microsoft-molnet eller Power Platform-tjänsterna är nere för överskådlig tid. Rådata behöver finnas externt och vara läsbar utan applikationen.'
+    }
+  ]
+};
+
+// ── SOLUTIONS ──
+const SOLS = {
+  m365: {
+    op: [{
+      name:'Veeam Backup for Microsoft 365',
+      desc:'Granulär återställning av enstaka filer, bibliotek eller siter. Data lagras externt i Softronics S3-repo, helt oberoende av Microsoft-tenanten. Täcker SharePoint, OneDrive, Exchange och Teams inklusive chatthistorik.',
+      rpo:'Ca 8 timmar', rto:'1 till 4 timmar (granulär)',
+      levels:['op'],
+      docurl:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', doclabel:'Veeam BM365'
+    },{
+      name:'Microsoft 365 Backup',
+      desc:'Microsofts egna backup-tjänst med RPO 10 minuter och bulk-restore utan API-throttling. Bra komplement till Veeam vid operativa incidenter, men data stannar inom Microsoft-ekosystemet.',
+      rpo:'10 minuter', rto:'1 till 3 dagar vid full restore av ca 18 TB',
+      levels:['op'],
+      docurl:'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-overview', doclabel:'M365 Backup docs'
+    }],
+    rw: [{
+      name:'Veeam BM365 med S3 Object Lock (immutable)',
+      desc:'S3-repot med Object Lock gör att data inte kan skrivas över eller raderas ens om admin-kontot är komprometterat. Vi rekommenderar minst 90 dagars retention. Retentionstiden är tröskelvärdet: med 90 dagar skyddar vi mot inkubationstider upp till 90 dagar. Repot behöver vara nätverksisolerat från tenanten.',
+      rpo:'Ca 8 timmar', rto:'Timmar till dagar beroende på scope och inkubationstidpunkt',
+      levels:['rw'],
+      docurl:'https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html', doclabel:'S3 Object Lock'
+    },{
+      name:'Microsoft 365 Backup som komplement vid lång inkubationstid',
+      desc:'M365 Backup ger upp till 1 års retention med veckovis granularitet bakåt. Kompletterar Veeam för scenarier där inkubationstiden överstiger 90 dagar. Data stannar inom Microsoft och löser inte Nivå 3.',
+      rpo:'10 minuter (senaste 2 veckorna), sedan veckovis', rto:'1 till 3 dagar vid full restore',
+      levels:['rw'],
+      docurl:'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-faq', doclabel:'M365 Backup FAQ'
+    }],
+    ex: [{
+      name:'Veeam BM365: rådata externt tillgänglig',
+      desc:'Filer från SharePoint, OneDrive och Exchange finns i Softronics datacenter oberoende av Microsoft. Ingen fungerande samarbetsyta ingår automatiskt, men rådata är tillgänglig och kan användas som grund för en ny plattform.',
+      rpo:'Beroende på senaste backup', rto:'Rådata: dagar. Fungerande miljö: nytt projekt.',
+      levels:['ex'],
+      docurl:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', doclabel:'Veeam BM365'
+    }]
+  },
+  dv: {
+    op: [{
+      name:'Inbyggd Dataverse-systembackup',
+      desc:'Daglig fullbackup per miljö med 28 dagars retention. Allt-eller-inget per miljö, ingen granulär återställning per tabell eller post. Restore sker till sandbox och promotas sedan manuellt till produktion.',
+      rpo:'1 dag', rto:'4 till 10 timmar (sandbox till prod)',
+      levels:['op'],
+      docurl:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', doclabel:'Power Platform backup'
+    }],
+    rw: [{
+      name:'Fabric Pipeline till Azure SQL eller on-prem SQL',
+      desc:'Dataverse kopplas till ett Fabric-workspace via Fabric Link som skapar genvägar till tabellerna i OneLake. Därifrån kör en Fabric Pipeline eller Notebook och skriver datan till Azure SQL eller on-prem SQL via en on-premises data gateway. Den externa SQL-kopian är oberoende av Power Platform och kan backas off-site med vanliga SQL-backupverktyg.',
+      rpo:'Ca 1 timme (inkrementell synk)', rto:'Beroende på exportstrategi och målmiljö',
+      levels:['rw','ex'],
+      docurl:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', doclabel:'Fabric Link for Dataverse'
+    }],
+    ex: []
+  }
+};
+
+// ── GAPS ──
+const GAPS = {
+  m365: {
+    ex: [{
+      t:'BYOK och nyckelexport behöver utredas',
+      d:'Filer med Sensitivity Labels är oanvändbara utanför tenanten utan exporterade krypteringsnycklar. Vi behöver tillsammans med er reda ut vilka filer som faktiskt är krypterade och om nycklarna finns tillgängliga utanför Microsoft.',
+      url:'https://learn.microsoft.com/en-us/microsoft-365/compliance/customer-key-overview', lbl:'Microsoft Customer Key'
+    },{
+      t:'Ingen alternativ samarbetsyta ingår',
+      d:'Rådata finns externt men utan SharePoint, Teams och Exchange finns ingen arbetsplattform. Det kräver ett separat beslut och investering utanför denna leverans.',
+      url:'', lbl:''
+    }]
+  },
+  dv: {
+    rw: [{
+      t:'Fabric Pipeline till SQL finns inte på plats idag',
+      d:'Det här behöver designas och implementeras som ett arkitekturarbete. Vi behöver gemensamt bestämma vilka tabeller som ska exporteras, hur ofta och till vilken målmiljö.',
+      url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link docs'
+    },{
+      t:'28-dagarsgapet kvarstår utan Fabric Pipeline',
+      d:'Utan extern export finns ingen etablerad tredjepartslösning som ger komplett extern Dataverse-backup per februari 2026.',
+      url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup docs'
+    }],
+    ex: [{
+      t:'Exportarkitektur måste vara på plats innan incidenten',
+      d:'Utan en körande Fabric Pipeline finns ingen extern kopia att falla tillbaka på. Frågan vi behöver svara på gemensamt: vad är den minsta datamängd som måste överleva, och räcker en daglig export av nyckeltabeller?',
+      url:'', lbl:''
+    },{
+      t:'Datan kan räddas men inte applikationen',
+      d:'Puma CRM tog mer än ett år att migrera till molnet. Att återuppbygga det på en ny plattform är ett nytt projekt, inte en DR-åtgärd. Det är viktigt att ledningen är medveten om det när man sätter förväntningarna.',
+      url:'', lbl:''
+    }]
+  }
+};
+
+// ── COVERED/NOT COVERED PER LEVEL COMBO ──
+const COVERAGE = {
+  m365: {
+    op:  { yes:['Oavsiktlig radering och korruption','Felkonfiguration som raderar eller exponerar data','Komprometterat konto med snabb kortvarig attack'], no:['Ransomware med lång inkubationstid (hanteras på ransomware-nivå)','Microsoft-molnet otillgängligt (hanteras på existentiell nivå)'] },
+    rw:  { yes:['Ransomware med inkubationstid upp till 90 dagar (Veeam) eller 1 år (M365 Backup)','Komprometterat admin-konto som raderar eller förstör data','Angriparen konfigurerar bort versionshistoriken'], no:['Inkubationstid längre än retentionstiden','Sensitivity Labels om nyckelinfrastrukturen är komprometterad','Microsoft-molnet otillgängligt (hanteras på existentiell nivå)'] },
+    ex:  { yes:['Rådata från SharePoint, OneDrive och Exchange är externt tillgänglig','Oberoende av Microsoft-tenanten och ekosystemet'], no:['Krypterade filer utan exporterade BYOK-nycklar','Fungerande samarbetsyta eller e-post utan alternativ plattform'] }
+  },
+  dv: {
+    op:  { yes:['Oavsiktlig radering och korrupt miljö','Felkonfiguration i Power Platform','Manipulation under kortare tid än 28 dagar'], no:['Granulär återställning av enstaka poster finns inte produktionsmässigt','Manipulation längre än 28 dagar (hanteras på ransomware-nivå)','Power Platform otillgängligt (hanteras på existentiell nivå)'] },
+    rw:  { yes:['Strukturerad data exporterad till extern SQL, oberoende av Dataverse','Manipulation längre än 28 dagar om Fabric Pipeline är konfigurerad'], no:['Data som inte ingår i exportkonfigurationen','Fungerande CRM-applikation utan Microsoft'] },
+    ex:  { yes:['Dataverse-data läsbar och användbar utan Power Platform om SQL-export finns','Mer tillgänglig rådata än M365-filer eftersom det är strukturerad data'], no:['Fungerande CRM-applikation utan Microsoft','Processer och automatiseringar beroende av Power Platform'] }
+  }
+};
+
+function pickSys(sys) {
+  st.sys = sys;
+  st.scens = [];
+  show('s2'); setStp(2);
+  renderScens();
+}
+
+function renderScens() {
+  const list = document.getElementById('scen-list');
+  list.innerHTML = '';
+  SCENS[st.sys].forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'scen-row';
+    el.dataset.id = s.id;
+    el.dataset.level = s.level;
+    el.innerHTML = `<div class="cb"></div><div class="scen-text"><div class="scen-name">${s.name}</div><div class="scen-desc">${s.desc}</div><span class="scen-level lv-${s.level}">${{op:'Operativ',rw:'Ransomware',ex:'Existentiellt'}[s.level]}</span></div>`;
+    el.onclick = () => toggleScen(el, s.id);
+    list.appendChild(el);
+  });
+}
+
+function toggleScen(el, id) {
+  el.classList.toggle('checked');
+  if (el.classList.contains('checked')) { st.scens.push(id); }
+  else { st.scens = st.scens.filter(x => x !== id); }
+  document.getElementById('scen-btn').disabled = st.scens.length === 0;
+}
+
+function showResult() {
+  show('s3'); setStp(3);
+  renderResult();
+}
+
+function renderResult() {
+  const sys = st.sys;
+  const chosenScens = SCENS[sys].filter(s => st.scens.includes(s.id));
+  const levels = [...new Set(chosenScens.map(s => s.level))];
+
+  // Breadcrumb
+  const sysL = sys === 'm365' ? 'M365' : 'Dynamics 365 & Power Platform';
+  const sysC = sys === 'm365' ? 'm365' : 'dv';
+  let bc = `<span class="bc-tag bc-${sysC}">${sysL}</span>`;
+  chosenScens.forEach(s => { bc += `<span class="bc-sep">›</span><span class="bc-tag bc-scen">${s.name}</span>`; });
+  document.getElementById('bc3').innerHTML = bc;
+
+  document.getElementById('rtitle').textContent = 'Rekommenderade lösningar';
+  document.getElementById('rsub').textContent = `Baserat på ${chosenScens.length} valt scenario${chosenScens.length > 1 ? 'n' : ''}.`;
+
+  let html = '';
+
+  // Lösningar per nivå
+  const levelOrder = ['op','rw','ex'];
+  const levelLabel = { op:'Operativ återställning', rw:'Ransomware och katastrofåterställning', ex:'Existentiellt' };
+
+  levelOrder.filter(l => levels.includes(l)).forEach(l => {
+    const sols = SOLS[sys][l];
+    if (!sols || sols.length === 0) return;
+    html += `<div class="rsec"><div class="rslabel">${levelLabel[l]}</div>`;
+    sols.forEach(s => {
+      const lvlTags = s.levels.map(lv => `<span class="scen-level lv-${lv}">${{op:'Operativ',rw:'Ransomware',ex:'Existentiellt'}[lv]}</span>`).join(' ');
+      html += `<div class="sol">
+        <div class="sol-header"><div class="sol-name">${s.name}</div><div class="sol-levels">${lvlTags}</div></div>
+        <div class="sol-desc">${s.desc}</div>
+        <div class="sol-meta">
+          <div class="kv"><div class="kk">RPO</div><div class="kv-v">${s.rpo}</div></div>
+          <div class="kv"><div class="kk">RTO</div><div class="kv-v">${s.rto}</div></div>
+        </div>
+        ${s.docurl ? `<a class="doc-link" href="${s.docurl}" target="_blank">↗ ${s.doclabel}</a>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  // Täcker / täcker inte (union av valda nivåer)
+  const allYes = [], allNo = [];
+  levels.forEach(l => {
+    const cov = COVERAGE[sys][l];
+    if (!cov) return;
+    cov.yes.forEach(y => { if (!allYes.includes(y)) allYes.push(y); });
+    cov.no.forEach(n => { if (!allNo.includes(n)) allNo.push(n); });
+  });
+  // Ta bort no-items som täcks av en annan vald nivå
+  const filteredNo = allNo.filter(n => !allYes.some(y => n.toLowerCase().startsWith(y.toLowerCase().substring(0,20))));
+
+  if (allYes.length || filteredNo.length) {
+    html += `<div class="rsec"><div class="rslabel">Täckning</div><div class="scen-summary">`;
+    if (allYes.length) {
+      html += `<div class="ss-block green"><div class="ss-head green"><div class="ss-dot dot-g"></div>Skyddar mot</div>`;
+      allYes.forEach(y => { html += `<div class="ss-item green"><span class="ss-mk green">✓</span><span>${y}</span></div>`; });
+      html += '</div>';
+    }
+    if (filteredNo.length) {
+      html += `<div class="ss-block red"><div class="ss-head red"><div class="ss-dot dot-r"></div>Skyddar inte mot</div>`;
+      filteredNo.forEach(n => { html += `<div class="ss-item red"><span class="ss-mk red">×</span><span>${n}</span></div>`; });
+      html += '</div>';
+    }
+    html += '</div></div>';
+  }
+
+  // Gap
+  const gapsToShow = [];
+  levels.forEach(l => {
+    const g = (GAPS[sys] || {})[l];
+    if (g) g.forEach(x => { if (!gapsToShow.find(y => y.t === x.t)) gapsToShow.push(x); });
+  });
+  if (gapsToShow.length) {
+    html += `<div class="rsec"><div class="rslabel">Gap och beslutspunkter</div>`;
+    gapsToShow.forEach(g => {
+      html += `<div class="gap"><div class="gap-t">${g.t}</div><div class="gap-d">${g.d}</div>${g.url ? `<a class="gap-link" href="${g.url}" target="_blank">↗ ${g.lbl}</a>` : ''}</div>`;
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('rbody').innerHTML = html;
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setStp(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('stp'+i);
+    el.className = 'stp ' + (i < n ? 'done' : i === n ? 'active' : 'future');
+  });
+}
+
+function reset() {
+  st.sys = null; st.scens = [];
+  show('s1'); setStp(1);
+}
+</script>
+</body>
+</html>
