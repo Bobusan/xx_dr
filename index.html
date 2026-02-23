@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DR-navigator – Fasab / Softronic</title>
+<title>DR-navigator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
   :root {
@@ -137,9 +137,9 @@
 <body>
 <header>
   <div style="display:flex;align-items:center;">
-    <span class="logo">Softronic</span>
+    <span class="logo">DR-navigator</span>
     <div class="h-sep"></div>
-    <span class="h-title">DR-navigator – Fasab</span>
+    <span class="h-title">Microsoft 365 och Power Platform</span>
   </div>
   <span class="h-meta">Arbetsversion feb 2026</span>
 </header>
@@ -254,7 +254,7 @@ const SOLS = {
   m365: {
     op: [{
       name:'Veeam Backup for Microsoft 365',
-      desc:'Granulär återställning av enstaka filer, bibliotek eller siter. Data lagras externt i Softronics S3-repo, helt oberoende av Microsoft-tenanten. Täcker SharePoint, OneDrive, Exchange och Teams inklusive chatthistorik.',
+      desc:'Granulär återställning av enstaka filer, bibliotek eller siter. Data lagras externt i ett S3-repo, helt oberoende av Microsoft-tenanten. Täcker SharePoint, OneDrive, Exchange och Teams inklusive chatthistorik.',
       rpo:'Ca 8 timmar', rto:'1 till 4 timmar (granulär)',
       levels:['op'],
       docurl:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', doclabel:'Veeam BM365'
@@ -280,7 +280,7 @@ const SOLS = {
     }],
     ex: [{
       name:'Veeam BM365: rådata externt tillgänglig',
-      desc:'Filer från SharePoint, OneDrive och Exchange finns i Softronics datacenter oberoende av Microsoft. Ingen fungerande samarbetsyta ingår automatiskt, men rådata är tillgänglig och kan användas som grund för en ny plattform.',
+      desc:'Filer från SharePoint, OneDrive och Exchange finns i externt datacenter, oberoende av Microsoft. Ingen fungerande samarbetsyta ingår automatiskt, men rådata är tillgänglig och kan användas som grund för en ny plattform.',
       rpo:'Beroende på senaste backup', rto:'Rådata: dagar. Fungerande miljö: nytt projekt.',
       levels:['ex'],
       docurl:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', doclabel:'Veeam BM365'
@@ -334,7 +334,7 @@ const GAPS = {
       url:'', lbl:''
     },{
       t:'Datan kan räddas men inte applikationen',
-      d:'Puma CRM tog mer än ett år att migrera till molnet. Att återuppbygga det på en ny plattform är ett nytt projekt, inte en DR-åtgärd. Det är viktigt att ledningen är medveten om det när man sätter förväntningarna.',
+      d:'Befintliga CRM-lösningar i Power Platform kan ta lång tid att migrera. Att återuppbygga på en ny plattform är ett nytt projekt, inte en DR-åtgärd. Det är viktigt att ledningen är medveten om det när man sätter förväntningarna.',
       url:'', lbl:''
     }]
   }
