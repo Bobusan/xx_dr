@@ -6,211 +6,100 @@
 <title>DR-navigator</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 :root {
-  --bg: #f4f4f4;
-  --white: #ffffff;
-  --border: #e0e0e0;
-  --border2: #c8c8c8;
-  --text: #1a1a1a;
-  --muted: #666;
-  --muted2: #aaa;
-  --brand: #e3000b;
-  --brand-dark: #b50008;
-  --col-w: 320px;
-  --green: #166534;
-  --green-bg: #f0fdf4;
-  --green-bd: #86efac;
-  --red: #991b1b;
-  --red-bg: #fff1f1;
-  --red-bd: #fca5a5;
-  --amber: #92400e;
-  --amber-bg: #fffbeb;
-  --amber-bd: #fcd34d;
+  --bg:#f0f0f0; --white:#fff; --border:#e0e0e0; --border2:#bbb;
+  --text:#1a1a1a; --muted:#666; --muted2:#aaa;
+  --brand:#e3000b; --brand-dark:#b50008;
+  --green:#166534; --green-bg:#f0fdf4; --green-bd:#86efac;
+  --red:#991b1b; --red-bg:#fff1f1; --red-bd:#fca5a5;
+  --amber:#92400e; --amber-bg:#fffbeb; --amber-bd:#fcd34d;
+  --info-bg:#eff6ff; --info-bd:#bfdbfe; --info-text:#1e40af;
+  --preview-bg:#faf5ff; --preview-bd:#d8b4fe; --preview-text:#6b21a8;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
-
-header {
-  background: #fff;
-  border-bottom: 3px solid var(--brand);
-  padding: 14px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  position: sticky; top: 0; z-index: 100;
-}
-.logo { font-size: 15px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .04em; }
-.h-sep { width: 1px; height: 16px; background: #ddd; margin: 0 16px; }
-.h-title { font-size: 13px; color: #555; font-weight: 500; }
-.draft-badge {
-  background: #fff3cd; color: #856404;
-  border: 1px solid #ffc107; border-radius: 3px;
-  padding: 2px 10px; font-size: 11px; font-weight: 700;
-  letter-spacing: .08em; text-transform: uppercase;
-}
-
-.board {
-  display: flex;
-  gap: 0;
-  padding: 32px;
-  min-height: calc(100vh - 57px);
-  align-items: flex-start;
-  overflow-x: auto;
-}
-
-.col {
-  width: var(--col-w);
-  flex-shrink: 0;
-  background: var(--white);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
-}
-.col + .col { margin-left: 16px; }
-
-.col-head {
-  padding: 16px 20px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.col-num {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: var(--brand); color: #fff;
-  font-size: 11px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.col-title { font-size: 13px; font-weight: 600; color: var(--text); }
-.col-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-
-.card {
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: border-color .12s, background .12s, transform .1s;
-  background: #fff;
-}
-.card:hover { border-color: var(--border2); transform: translateY(-1px); }
-.card.active { border-color: var(--brand); background: #fff8f8; }
-.card.dimmed { opacity: .38; }
-.card-label { font-size: 11px; font-weight: 600; color: var(--muted2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
-.card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-.card-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
-
-.answer-group { display: flex; flex-direction: column; gap: 6px; }
-.answer-head { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.answer-sub { font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
-.answer-btn {
-  border: 1.5px solid var(--border);
-  border-radius: 6px;
-  padding: 9px 12px;
-  cursor: pointer;
-  background: #fff;
-  text-align: left;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: var(--text);
-  transition: all .12s;
-  line-height: 1.4;
-}
-.answer-btn:hover { border-color: var(--border2); background: #fafafa; }
-.answer-btn.selected { border-color: var(--brand); background: #fff8f8; color: var(--brand); font-weight: 600; }
-.answer-btn .ex { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px; }
-.answer-btn.selected .ex { color: #e37a00; }
-
-.q-block { margin-bottom: 16px; }
-.q-block:last-child { margin-bottom: 0; }
-
-.divider { height: 1px; background: var(--border); margin: 12px 0; }
-
-.connector {
-  width: 32px; flex-shrink: 0;
-  display: flex; align-items: flex-start; justify-content: center;
-  padding-top: 60px;
-}
-.connector svg { color: var(--muted2); }
-
-.col.result-col { width: 380px; }
-
-.result-placeholder {
-  padding: 32px 20px;
-  text-align: center;
-  color: var(--muted2);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.result-placeholder .icon { font-size: 32px; margin-bottom: 12px; }
-
-.sol-card {
-  background: #fff;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 8px;
-}
-.sol-card:last-child { margin-bottom: 0; }
-.sol-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-.sol-desc { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
-.sol-kv { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
-.kv { display: flex; flex-direction: column; gap: 1px; }
-.kk { font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted2); font-weight: 600; }
-.kv-v { font-size: 12px; font-weight: 500; color: var(--text); }
-.doc-link {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 10px; color: #1a56db; text-decoration: none;
-  padding: 2px 8px; border: 1px solid #c3d3f7;
-  border-radius: 3px; background: #eff4ff;
-}
-.doc-link:hover { background: #c3d3f7; }
-
-.rsec-label {
-  font-size: 10px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: .1em; color: var(--muted); margin-bottom: 8px;
-  display: flex; align-items: center; gap: 8px;
-}
-.rsec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-.cov-block { border-radius: 7px; padding: 12px 14px; margin-bottom: 8px; }
-.cov-block.green { background: var(--green-bg); border: 1.5px solid var(--green-bd); }
-.cov-block.red   { background: var(--red-bg);   border: 1.5px solid var(--red-bd); }
-.cov-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-.cov-head.green { color: var(--green); }
-.cov-head.red   { color: var(--red); }
-.cov-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.dot-g { background: var(--green); }
-.dot-r { background: var(--red); }
-.cov-item { display: flex; gap: 6px; font-size: 12px; line-height: 1.5; margin-bottom: 4px; }
-.cov-item:last-child { margin-bottom: 0; }
-.cov-item.green { color: #14532d; }
-.cov-item.red   { color: #7f1d1d; }
-.cov-mk { flex-shrink: 0; font-size: 11px; margin-top: 1px; font-weight: 700; }
-
-.gap-card { background: var(--amber-bg); border: 1.5px solid var(--amber-bd); border-radius: 7px; padding: 12px 14px; margin-bottom: 8px; }
-.gap-card:last-child { margin-bottom: 0; }
-.gap-t { font-size: 12px; font-weight: 600; color: var(--amber); margin-bottom: 3px; }
-.gap-d { font-size: 12px; color: #78350f; line-height: 1.55; }
-.gap-link { display: inline-block; margin-top: 5px; font-size: 10px; color: #1a56db; text-decoration: none; }
-.gap-link:hover { text-decoration: underline; }
-
-.rsec { margin-bottom: 16px; }
-
-.level-tag {
-  display: inline-block; padding: 1px 7px; border-radius: 3px;
-  font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.tag-op { background: #edfaf3; color: #0d6640; border: 1px solid #9de5c0; }
-.tag-rw { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
-.tag-ex { background: #fff1f1; color: #991b1b; border: 1px solid #fca5a5; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;}
+header{background:#fff;border-bottom:3px solid var(--brand);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:100;}
+.logo{font-size:15px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.04em;}
+.h-sep{width:1px;height:16px;background:#ddd;margin:0 16px;}
+.h-title{font-size:13px;color:#555;font-weight:500;}
+.draft-badge{background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:3px;padding:2px 10px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.board{display:flex;gap:0;padding:28px 32px 60px;min-height:calc(100vh - 57px);align-items:flex-start;overflow-x:auto;}
+.col{width:300px;flex-shrink:0;background:var(--white);border-radius:10px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.col+.col{margin-left:14px;}
+.col.wide{width:380px;}
+.col-head{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.col-num{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.col-title{font-size:13px;font-weight:600;}
+.col-body{padding:14px;display:flex;flex-direction:column;gap:8px;}
+.card{border:1.5px solid var(--border);border-radius:8px;padding:13px 15px;cursor:pointer;transition:border-color .12s,background .12s,transform .1s;background:#fff;}
+.card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.card.active{border-color:var(--brand);background:#fff8f8;}
+.card.dimmed{opacity:.35;pointer-events:none;}
+.card-label{font-size:10px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.card-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.divider{height:1px;background:var(--border);margin:10px 0;}
+.q-block{margin-bottom:4px;}
+.q-head{font-size:12px;font-weight:600;margin-bottom:2px;}
+.q-sub{font-size:11px;color:var(--muted);margin-bottom:7px;line-height:1.5;}
+.answer-group{display:flex;flex-direction:column;gap:5px;}
+.answer-btn{border:1.5px solid var(--border);border-radius:6px;padding:8px 12px;cursor:pointer;background:#fff;text-align:left;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);transition:all .12s;line-height:1.4;}
+.answer-btn:hover{border-color:var(--border2);background:#fafafa;}
+.answer-btn.selected{border-color:var(--brand);background:#fff8f8;color:var(--brand);font-weight:600;}
+.answer-btn .ex{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px;}
+.answer-btn.selected .ex{color:#c05621;}
+.connector{width:28px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;padding-top:52px;}
+.connector svg{color:var(--muted2);}
+.placeholder{padding:28px 16px;text-align:center;color:var(--muted2);font-size:13px;line-height:1.6;}
+.rsec{margin-bottom:14px;}
+.rsec-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+.rsec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.level-tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;}
+.tag-op{background:#edfaf3;color:#0d6640;border:1px solid #9de5c0;}
+.tag-rw{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;}
+.tag-ex{background:#fff1f1;color:#991b1b;border:1px solid #fca5a5;}
+.sol-card{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:7px;}
+.sol-card:last-child{margin-bottom:0;}
+.sol-name{font-size:13px;font-weight:600;margin-bottom:5px;}
+.sol-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:9px;}
+.sol-kv{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:7px;}
+.kv{display:flex;flex-direction:column;gap:1px;}
+.kk{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);font-weight:600;}
+.kv-v{font-size:12px;font-weight:500;}
+.doc-link{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#1a56db;text-decoration:none;padding:2px 8px;border:1px solid #c3d3f7;border-radius:3px;background:#eff4ff;}
+.doc-link:hover{background:#c3d3f7;}
+.cov-block{border-radius:7px;padding:11px 13px;margin-bottom:7px;}
+.cov-block:last-child{margin-bottom:0;}
+.cov-block.green{background:var(--green-bg);border:1.5px solid var(--green-bd);}
+.cov-block.red{background:var(--red-bg);border:1.5px solid var(--red-bd);}
+.cov-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.cov-head.green{color:var(--green);}
+.cov-head.red{color:var(--red);}
+.cov-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot-g{background:var(--green);}
+.dot-r{background:var(--red);}
+.cov-item{display:flex;gap:6px;font-size:12px;line-height:1.5;margin-bottom:3px;}
+.cov-item:last-child{margin-bottom:0;}
+.cov-item.green{color:#14532d;}
+.cov-item.red{color:#7f1d1d;}
+.cov-mk{flex-shrink:0;font-size:11px;margin-top:1px;font-weight:700;}
+.gap-card{background:var(--amber-bg);border:1.5px solid var(--amber-bd);border-radius:7px;padding:11px 13px;margin-bottom:7px;}
+.gap-card:last-child{margin-bottom:0;}
+.gap-t{font-size:12px;font-weight:600;color:var(--amber);margin-bottom:3px;}
+.gap-d{font-size:12px;color:#78350f;line-height:1.5;}
+.gap-link{display:inline-block;margin-top:4px;font-size:10px;color:#1a56db;text-decoration:none;}
+.gap-link:hover{text-decoration:underline;}
+.builtin-card{background:var(--info-bg);border:1.5px solid var(--info-bd);border-radius:7px;padding:11px 13px;margin-bottom:7px;}
+.builtin-card:last-child{margin-bottom:0;}
+.builtin-name{font-size:12px;font-weight:600;color:var(--info-text);margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+.builtin-desc{font-size:12px;color:#1e3a8a;line-height:1.5;}
+.preview-badge{font-size:9px;font-weight:700;background:var(--preview-bg);color:var(--preview-text);border:1px solid var(--preview-bd);border-radius:3px;padding:1px 5px;letter-spacing:.04em;}
+.critical-card{background:#fff1f1;border:1.5px solid var(--red-bd);border-radius:7px;padding:11px 13px;margin-bottom:7px;}
+.critical-title{font-size:12px;font-weight:600;color:var(--red);margin-bottom:3px;}
+.critical-desc{font-size:12px;color:#7f1d1d;line-height:1.5;}
 </style>
 </head>
 <body>
-
 <header>
   <div style="display:flex;align-items:center;">
     <span class="logo">DR-navigator</span>
@@ -219,14 +108,9 @@ header {
   </div>
   <span class="draft-badge">Utkast</span>
 </header>
-
 <div class="board">
-
-    <div class="col">
-    <div class="col-head">
-      <div class="col-num">1</div>
-      <div class="col-title">Vilket system?</div>
-    </div>
+  <div class="col">
+    <div class="col-head"><div class="col-num">1</div><div class="col-title">Vilket system?</div></div>
     <div class="col-body">
       <div class="card" id="sys-m365" onclick="pickSys('m365')">
         <div class="card-label">Samarbete och kommunikation</div>
@@ -240,325 +124,225 @@ header {
       </div>
     </div>
   </div>
-
-    <div class="connector">
-    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="connector"><svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="col">
+    <div class="col-head"><div class="col-num">2</div><div class="col-title">Några frågor</div></div>
+    <div class="col-body" id="q-body"><div class="placeholder">Välj ett system till vänster.</div></div>
   </div>
-
-    <div class="col">
-    <div class="col-head">
-      <div class="col-num">2</div>
-      <div class="col-title">Några frågor först</div>
-    </div>
-    <div class="col-body" id="q-body">
-      <div style="padding: 16px 4px; color: var(--muted2); font-size: 13px; text-align: center; line-height: 1.6;">
-        Börja med att välja ett system till vänster.
-      </div>
-    </div>
+  <div class="connector"><svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="col wide">
+    <div class="col-head"><div class="col-num">3</div><div class="col-title">Lösning och täckning</div></div>
+    <div class="col-body" id="result-body"><div class="placeholder">Svara på frågorna i mitten så visas lösningar och täckning här.</div></div>
   </div>
-
-    <div class="connector">
-    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-
-    <div class="col result-col">
-    <div class="col-head">
-      <div class="col-num">3</div>
-      <div class="col-title">Lösning och täckning</div>
-    </div>
-    <div class="col-body" id="result-body">
-      <div class="result-placeholder">
-        <div class="icon">→</div>
-        Svara på frågorna i mitten så visas lösningar och täckning här.
-      </div>
-    </div>
-  </div>
-
 </div>
-
 <script>
-const state = { sys: null, rto: null, scope: null, ext: null };
+const S = {sys:null, critical:null, time:null, scenario:null};
 
 const Q = {
-  m365: [
-    {
-      id: 'rto',
-      head: 'Hur länge kan verksamheten stå utan systemet?',
-      sub: 'Tänk på det värsta fallet, inte det troliga.',
-      answers: [
-        { val: 'hours', label: 'Några timmar', ex: 'Verksamheten stannar nästan direkt' },
-        { val: 'day',   label: 'Ett dygn',     ex: 'Det är märkbart men hanterbart' },
-        { val: 'days',  label: 'Flera dagar',  ex: 'Verksamheten klarar sig ett par dagar' },
-      ]
-    },{
-      id: 'scope',
-      head: 'Vad är det värsta som kan hända med datan?',
-      sub: 'Välj det scenario som känns mest kritiskt.',
-      answers: [
-        { val: 'accidental', label: 'Oavsiktlig radering eller ändring', ex: 'Mänskligt misstag, felkonfiguration' },
-        { val: 'ransomware', label: 'Kryptering eller sabotage som pågått länge', ex: 'Angripare aktiv i systemet under lång tid' },
-        { val: 'gone',       label: 'Molntjänsten blir otillgänglig', ex: 'Leverantören faller bort av affärsmässiga eller tekniska skäl' },
-      ]
-    },{
-      id: 'ext',
-      head: 'Behöver data finnas helt utanför molnleverantören?',
-      sub: 'Relevant vid ransomware och existentiella scenarier.',
-      answers: [
-        { val: 'yes', label: 'Ja, externt och isolerat', ex: 'Regulatoriska krav eller intern policy kräver det' },
-        { val: 'no',  label: 'Nej, inom Microsoft räcker', ex: 'Redundans inom leverantörens ekosystem räcker' },
-      ]
-    }
+  m365:[
+    {id:'critical', head:'Finns det data som inte får gå förlorad under några omständigheter?',
+     sub:'Tänk på information som är omöjlig att rekonstruera och avgörande för verksamheten.',
+     answers:[
+       {val:'yes', label:'Ja, det finns sådan data', ex:'Avtal, historiska poster, unik affärsinformation'},
+       {val:'no',  label:'Nej, allt går att återskapa', ex:'Allt finns i andra system eller kan rekonstrueras'}
+     ]},
+    {id:'time', head:'Hur lång tid kan data vara otillgänglig eller felaktig utan att det är katastrofalt?',
+     sub:'Sätter kravet på återställningstid.',
+     answers:[
+       {val:'hours', label:'Timmar',           ex:'Verksamheten påverkas direkt och märkbart'},
+       {val:'weeks', label:'Dagar till veckor', ex:'Det är allvarligt men hanterbart en period'},
+       {val:'months',label:'Veckor till månader',ex:'Långsam smygande påverkan märks sent'}
+     ]},
+    {id:'scenario', head:'Vad är det mest kritiska hotet?',
+     sub:'Välj det som känns mest relevant att skydda sig mot.',
+     answers:[
+       {val:'accidental', label:'Oavsiktlig radering eller felkonfiguration', ex:'Mänskligt misstag, trasig automation'},
+       {val:'ransomware', label:'Angrepp eller sabotage som pågått länge',   ex:'Data krypterad eller manipulerad under lång tid'},
+       {val:'outage',     label:'Molntjänsten otillgänglig',                 ex:'Längre avbrott hos leverantören'}
+     ]}
   ],
-  dv: [
-    {
-      id: 'rto',
-      head: 'Hur länge kan verksamheten stå utan systemet?',
-      sub: 'Tänk på det värsta fallet, inte det troliga.',
-      answers: [
-        { val: 'hours', label: 'Några timmar', ex: 'Verksamheten stannar nästan direkt' },
-        { val: 'day',   label: 'Ett dygn',     ex: 'Det är märkbart men hanterbart' },
-        { val: 'days',  label: 'Flera dagar',  ex: 'Verksamheten klarar sig ett par dagar' },
-      ]
-    },{
-      id: 'scope',
-      head: 'Vad är det värsta som kan hända med datan?',
-      sub: 'Välj det scenario som känns mest kritiskt.',
-      answers: [
-        { val: 'accidental', label: 'Oavsiktlig radering eller felkonfiguration', ex: 'Bulk-operation eller ett trasigt flöde' },
-        { val: 'ransomware', label: 'Smygande manipulation över tid', ex: 'Data förändras gradvis utan att det märks direkt' },
-        { val: 'gone',       label: 'Molntjänsten blir otillgänglig', ex: 'Tjänsten faller bort av tekniska eller affärsmässiga skäl' },
-      ]
-    },{
-      id: 'ext',
-      head: 'Räcker rådata som nödlösning?',
-      sub: 'Påverkar hur långt återställning faktiskt tar.',
-      answers: [
-        { val: 'data', label: 'Rådata räcker som nödlösning', ex: 'Data i SQL eller Excel räcker ett tag' },
-        { val: 'app',  label: 'Applikationen måste vara uppe', ex: 'Verksamheten kan inte arbeta utan applikationen' },
-      ]
-    }
+  dv:[
+    {id:'critical', head:'Finns det data som inte får gå förlorad under några omständigheter?',
+     sub:'Tänk på information som är omöjlig att rekonstruera och avgörande för verksamheten.',
+     answers:[
+       {val:'yes', label:'Ja, det finns sådan data', ex:'Transaktioner, kunddata, historik som inte finns någon annanstans'},
+       {val:'no',  label:'Nej, allt går att återskapa', ex:'Allt finns i andra system eller kan rekonstrueras'}
+     ]},
+    {id:'time', head:'Hur lång tid kan data vara otillgänglig eller felaktig utan att det är katastrofalt?',
+     sub:'Sätter kravet på återställningstid.',
+     answers:[
+       {val:'hours', label:'Timmar',            ex:'Verksamheten påverkas direkt och märkbart'},
+       {val:'weeks', label:'Dagar till veckor',  ex:'Det är allvarligt men hanterbart en period'},
+       {val:'months',label:'Veckor till månader',ex:'Långsam smygande påverkan märks sent'}
+     ]},
+    {id:'scenario', head:'Vad är det mest kritiska hotet?',
+     sub:'Välj det som känns mest relevant att skydda sig mot.',
+     answers:[
+       {val:'accidental', label:'Oavsiktlig radering eller felkonfiguration', ex:'Bulk-operation, trasigt flöde, felaktig import'},
+       {val:'ransomware', label:'Manipulation som pågått länge',              ex:'Data smygande ändrad under veckor eller månader'},
+       {val:'outage',     label:'Molntjänsten otillgänglig',                  ex:'Power Platform otillgänglig för överskådlig tid'}
+     ]}
   ]
 };
 
-const RESULTS = {
-  m365: {
-    accidental: {
-      label: 'Operativ återställning',
-      tag: 'tag-op',
-      sols: [{
-        name: 'Veeam Backup for Microsoft 365',
-        desc: 'Granulär återställning av filer, bibliotek och siter. Data lagras externt, oberoende av Microsoft-tenanten. Täcker SharePoint, OneDrive, Exchange och Teams inklusive chatthistorik.',
-        rpo: 'Ca 8 timmar', rto: '1 till 4 timmar',
-        url: 'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl: 'Veeam BM365'
-      },{
-        name: 'Microsoft 365 Backup',
-        desc: 'Microsofts inbyggda backup med RPO 10 minuter. Snabb bulk-restore utan begränsningar. Data stannar inom Microsoft.',
-        rpo: '10 minuter', rto: '1 till 3 dagar vid full restore',
-        url: 'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-overview', lbl: 'M365 Backup docs'
-      }],
-      yes: ['Oavsiktlig radering och korruption', 'Felkonfiguration som raderar eller exponerar data', 'Komprometterat konto med kortvarig attack'],
-      no:  ['Ransomware med lång inkubationstid', 'Microsoft-molnet otillgängligt'],
-      gaps: []
+const R = {
+  m365:{
+    accidental:{
+      tag:'tag-op', label:'Operativ återställning',
+      builtin:[
+        {name:'Versionshistorik och papperskorg', desc:'Inbyggt i SharePoint och OneDrive. Versionshistorik ger granulär återställning av enstaka filer. Papperskorg behåller raderat innehåll i 93 dagar.', url:'https://support.microsoft.com/en-us/office/restore-items-in-the-recycle-bin-that-were-deleted-from-sharepoint-or-teams-6df466b6-55f2-4898-8d6e-c0dff851a0be', lbl:'SharePoint återställning'},
+        {name:'Microsofts plattformsbackup', desc:'Microsoft tar automatiska snapshots var 12:e timme med 14 dagars retention. Finns tillgänglig utan extra licens men ger inte granulär återställning.', url:'https://learn.microsoft.com/en-us/microsoft-365/enterprise/microsoft-365-backup-storage-explainer', lbl:'Plattformsbackup docs'}
+      ],
+      sols:[
+        {name:'Microsoft 365 Backup', desc:'Microsofts inbyggda backup-tjänst med RPO 10 minuter och bulk-restore utan begränsningar. Täcker SharePoint och OneDrive. Data stannar inom Microsofts ekosystem.', rpo:'10 minuter', rto:'Timmar till dagar beroende på scope', url:'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-overview', lbl:'M365 Backup docs'},
+        {name:'Veeam Backup for Microsoft 365', desc:'Granulär återställning av filer, bibliotek och siter. Data lagras externt, oberoende av Microsoft-tenanten. Täcker SharePoint, OneDrive, Exchange och Teams inklusive chatthistorik.', rpo:'Ca 8 timmar', rto:'1 till 4 timmar granulär', url:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl:'Veeam BM365'}
+      ],
+      yes:['Oavsiktlig radering och korruption','Felkonfiguration som raderar eller exponerar data','Komprometterat konto med kortvarig attack'],
+      no:['Angrepp med lång inkubationstid','Molntjänsten otillgänglig'],
+      gaps:[]
     },
-    ransomware: {
-      label: 'Ransomware och katastrofåterställning',
-      tag: 'tag-rw',
-      sols: [{
-        name: 'Veeam BM365 med S3 Object Lock',
-        desc: 'Immutable lagring innebär att data inte kan skrivas över eller raderas, även om ett admin-konto är komprometterat. Minst 90 dagars retention rekommenderas och repot bör vara nätverksisolerat.',
-        rpo: 'Ca 8 timmar', rto: 'Timmar till dagar beroende på scope',
-        url: 'https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html', lbl: 'S3 Object Lock'
-      },{
-        name: 'Microsoft 365 Backup, upp till 1 år',
-        desc: 'Kompletterar extern backup med upp till 52 veckors retention. RPO 10 minuter för de senaste 2 veckorna, sedan veckovis granularitet.',
-        rpo: '10 min (senaste 2 veckorna), sedan veckovis', rto: '1 till 3 dagar vid full restore',
-        url: 'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-faq', lbl: 'M365 Backup FAQ'
-      }],
-      yes: ['Ransomware med inkubationstid upp till 90 dagar (extern backup) eller 1 år (M365 Backup)', 'Komprometterat admin-konto som förstör data', 'Angripare som konfigurerar bort versionshistorik'],
-      no:  ['Inkubationstid längre än retentionstiden', 'Krypterade filer om nyckelinfrastrukturen är komprometterad', 'Microsoft-molnet otillgängligt'],
-      gaps: [{
-        t: 'Nätverksisolation av backup-repot behöver verifieras',
-        d: 'Immutability skyddar mot överskrivning men ett repo som går att nå från en komprometterad tenant är fortfarande sårbart.',
-        url: '', lbl: ''
-      },{
-        t: 'Krypteringsnycklar för skyddade filer behöver kartläggas',
-        d: 'Filer med känslighetsmärkning kan vara krypterade. Utan exporterade nycklar är de oanvändbara även om backup-filen finns.',
-        url: 'https://learn.microsoft.com/en-us/microsoft-365/compliance/customer-key-overview', lbl: 'Microsoft Customer Key'
-      }]
+    ransomware:{
+      tag:'tag-rw', label:'Ransomware och långvarigt angrepp',
+      builtin:[
+        {name:'Versionshistorik', desc:'Ger viss återställningsförmåga men kan manipuleras av en angripare med tillräckliga behörigheter. Bör inte vara enda skyddet mot riktade angrepp.', url:'https://learn.microsoft.com/en-us/sharepoint/document-library-versioning', lbl:'Versionshistorik docs'}
+      ],
+      sols:[
+        {name:'Extern immutable backup, Veeam BM365', desc:'Data lagras externt med immutable lagring, vilket innebär att backupen inte kan skrivas över eller raderas. Gäller även om admin-behörigheter är komprometterade. Rekommenderad retention är minst 90 dagar.', rpo:'Ca 8 timmar', rto:'Timmar till dagar beroende på scope', url:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl:'Veeam BM365'},
+        {name:'Microsoft 365 Backup, upp till 1 år', desc:'Kompletterar extern backup med upp till 52 veckors retention och veckovis granularitet bakåt. RPO 10 minuter för de senaste 2 veckorna. Data stannar inom Microsoft.', rpo:'10 min (senaste 2 veckorna), sedan veckovis', rto:'1 till 3 dagar vid full restore', url:'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-faq', lbl:'M365 Backup FAQ'}
+      ],
+      yes:['Ransomware med inkubationstid upp till 90 dagar med extern backup, upp till 1 år med M365 Backup','Komprometterat admin-konto som förstör eller raderar data','Angripare som manipulerar versionshistorik'],
+      no:['Inkubationstid längre än retentionstiden','Krypterade filer utan exporterade nycklar','Molntjänsten otillgänglig'],
+      gaps:[
+        {t:'Krypteringsnycklar för skyddade filer behöver kartläggas', d:'Filer med känslighetsmärkning kan vara krypterade. Utan exporterade nycklar är de oanvändbara även om backup-filen finns.', url:'https://learn.microsoft.com/en-us/microsoft-365/compliance/customer-key-overview', lbl:'Microsoft Customer Key'}
+      ]
     },
-    gone: {
-      label: 'Existentiellt',
-      tag: 'tag-ex',
-      sols: [{
-        name: 'Veeam BM365, rådata externt',
-        desc: 'Filer från SharePoint, OneDrive och Exchange finns lagrade externt, oberoende av Microsoft. En fungerande samarbetsyta kräver ett separat projekt.',
-        rpo: 'Beroende på senaste backup', rto: 'Rådata: dagar. Fungerande miljö: nytt projekt.',
-        url: 'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl: 'Veeam BM365'
-      }],
-      yes: ['Rådata från SharePoint, OneDrive och Exchange finns externt', 'Oberoende av Microsoft-ekosystemet'],
-      no:  ['Krypterade filer utan exporterade nycklar', 'Fungerande samarbetsyta utan alternativ plattform', 'Teams-historik och applikationer kopplade till M365'],
-      gaps: [{
-        t: 'Krypteringsnycklar för skyddade filer behöver kartläggas',
-        d: 'Filer med känslighetsmärkning är oanvändbara utanför tenanten utan exporterade nycklar.',
-        url: 'https://learn.microsoft.com/en-us/microsoft-365/compliance/customer-key-overview', lbl: 'Microsoft Customer Key'
-      },{
-        t: 'Ingen alternativ samarbetsyta ingår',
-        d: 'Rådata finns tillgänglig men utan e-post, SharePoint och Teams saknas en fungerande arbetsplattform. Kräver ett separat beslut om alternativ.',
-        url: '', lbl: ''
-      }]
+    outage:{
+      tag:'tag-ex', label:'Molntjänst otillgänglig',
+      builtin:[],
+      sols:[
+        {name:'Extern backup, Veeam BM365', desc:'Filer från SharePoint, OneDrive och Exchange finns lagrade externt, oberoende av Microsoft. En fungerande arbetsplattform kräver ett separat beslut om alternativ.', rpo:'Beroende på senaste backup', rto:'Rådata: dagar. Fungerande miljö: eget projekt.', url:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl:'Veeam BM365'}
+      ],
+      yes:['Rådata från SharePoint, OneDrive och Exchange finns externt och oberoende av Microsoft'],
+      no:['Krypterade filer utan exporterade nycklar','Fungerande arbetsplattform utan alternativ','Teams-historik och applikationer kopplade till M365'],
+      gaps:[
+        {t:'Krypteringsnycklar behöver kartläggas', d:'Filer med känslighetsmärkning är oanvändbara utanför tenanten utan exporterade nycklar.', url:'https://learn.microsoft.com/en-us/microsoft-365/compliance/customer-key-overview', lbl:'Microsoft Customer Key'},
+        {t:'Ingen alternativ arbetsplattform ingår', d:'Rådata finns tillgänglig men utan e-post, SharePoint och Teams saknas en fungerande arbetsmiljö. Kräver ett separat beslut om alternativ.', url:'', lbl:''}
+      ],
+      critical: true
     }
   },
-  dv: {
-    accidental: {
-      label: 'Operativ återställning',
-      tag: 'tag-op',
-      sols: [{
-        name: 'Inbyggd Dataverse-systembackup',
-        desc: 'Daglig fullbackup per miljö med 28 dagars retention. Återställning sker till sandbox och promotas manuellt till produktionsmiljön. Granulär återställning per post stöds inte.',
-        rpo: '1 dag', rto: '4 till 10 timmar',
-        url: 'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl: 'Power Platform backup'
-      }],
-      yes: ['Felkonfiguration och oavsiktlig radering', 'Trasigt flöde eller bulk-operation som förstör data', 'Korruption via Microsoft-fel'],
-      no:  ['Granulär återställning av enstaka poster', 'Manipulation längre än 28 dagar', 'Power Platform otillgängligt'],
-      gaps: []
+  dv:{
+    accidental:{
+      tag:'tag-op', label:'Operativ återställning',
+      builtin:[
+        {name:'Inbyggd Dataverse-systembackup', desc:'Daglig fullbackup per miljö med 28 dagars retention. Ingen extra konfiguration krävs. Återställning sker till sandbox och promotas manuellt till produktion. Granulär återställning per post stöds inte.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup'},
+        {name:'Deleted records, preview', desc:'Återställning av enstaka raderade poster direkt i applikationen. Finns i preview men är ännu inte tillgängligt i alla regioner.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/restore-deleted-table-records', lbl:'Deleted records docs', preview:true}
+      ],
+      sols:[],
+      yes:['Felkonfiguration och oavsiktlig radering','Trasigt flöde eller bulk-operation som förstör data','Korruption inom 28 dagar'],
+      no:['Granulär återställning av enstaka poster utan preview-funktionen','Manipulation längre än 28 dagar','Power Platform otillgänglig'],
+      gaps:[]
     },
-    ransomware: {
-      label: 'Ransomware och katastrofåterställning',
-      tag: 'tag-rw',
-      sols: [{
-        name: 'Fabric Pipeline till Azure SQL eller on-prem SQL',
-        desc: 'Dataverse speglas till ett Fabric-workspace via Fabric Link. En Fabric Pipeline läser tabellerna och skriver till Azure SQL eller on-prem SQL via en data gateway. SQL-kopian är oberoende av Power Platform och kan backas upp externt med vanliga SQL-verktyg.',
-        rpo: 'Ca 1 timme', rto: 'Beroende på exportstrategi och målmiljö',
-        url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl: 'Fabric Link for Dataverse'
-      }],
-      yes: ['Strukturerad data exporterad till extern SQL, oberoende av Dataverse', 'Manipulation längre än 28 dagar om pipeline är konfigurerad och körs'],
-      no:  ['Data utanför exportkonfigurationen', 'Fungerande applikation utan Microsoft'],
-      gaps: [{
-        t: 'Fabric Pipeline finns inte på plats idag',
-        d: 'Behöver designas och implementeras. Beslut krävs om vilka tabeller som ska exporteras, med vilken frekvens och till vilken miljö.',
-        url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl: 'Fabric Link docs'
-      },{
-        t: '28-dagarsgapet kvarstår utan pipeline',
-        d: 'Utan extern export saknas en komplett extern backup av Dataverse-data.',
-        url: 'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl: 'Power Platform backup docs'
-      }]
+    ransomware:{
+      tag:'tag-rw', label:'Manipulation och långvarigt angrepp',
+      builtin:[
+        {name:'Inbyggd Dataverse-systembackup', desc:'Täcker manipulation inom 28 dagar. Utanför det fönstret finns ingen inbyggd lösning.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup'}
+      ],
+      sols:[
+        {name:'Fabric Pipeline till extern SQL', desc:'Dataverse speglas till ett Fabric-workspace via Fabric Link. En Fabric Pipeline skriver till Azure SQL eller on-prem SQL via en data gateway. SQL-kopian är oberoende av Power Platform och kan backas upp externt med vanliga SQL-verktyg.', rpo:'Ca 1 timme', rto:'Beroende på exportstrategi och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link för Dataverse'}
+      ],
+      yes:['Strukturerad data exporterad externt och oberoende av Dataverse','Manipulation som pågått längre än 28 dagar, om pipeline är aktiv'],
+      no:['Data utanför exportkonfigurationen','Fungerande applikation utan Microsoft'],
+      gaps:[
+        {t:'Fabric Pipeline finns inte på plats', d:'Behöver designas och implementeras. Beslut krävs om vilka tabeller som exporteras, med vilken frekvens och till vilken miljö.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link docs'},
+        {t:'28-dagarsgapet kvarstår utan pipeline', d:'Utan extern export saknas en komplett backup av Dataverse-data utanför Microsoft.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup docs'}
+      ]
     },
-    gone: {
-      label: 'Existentiellt',
-      tag: 'tag-ex',
-      sols: [{
-        name: 'Fabric Pipeline till SQL, rådata externt',
-        desc: 'Med en aktiv Fabric Pipeline finns Dataverse-datan speglad i en extern SQL-databas. Strukturerad data är enklare att hantera manuellt jämfört med filbaserade system, och SQL-kopian kan läsas utan att Power Platform är tillgängligt.',
-        rpo: 'Beroende på exportstrategi', rto: 'Rådata: dagar om export finns. Fungerande applikation: nytt projekt.',
-        url: 'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl: 'Fabric Link docs'
-      }],
-      yes: ['Strukturerad data är läsbar utan Power Platform, förutsatt att SQL-export finns', 'Mer tillgänglig rådata än filbaserade system'],
-      no:  ['Fungerande applikation utan Microsoft', 'Data utanför exportkonfigurationen', 'Automatiseringar och flöden beroende av Power Platform'],
-      gaps: [{
-        t: 'Exportarkitekturen måste vara på plats innan en incident inträffar',
-        d: 'Utan en aktiv pipeline finns ingen extern kopia att falla tillbaka på. Det bör beslutas vilken datamängd som är kritisk att bevara.',
-        url: '', lbl: ''
-      },{
-        t: 'Att återuppbygga applikationen är inte en DR-åtgärd',
-        d: 'Komplexa lösningar i Power Platform kan ta lång tid att migrera. Att återuppbygga på en ny plattform är ett eget projekt och inte en del av katastrofåterställning.',
-        url: '', lbl: ''
-      }]
+    outage:{
+      tag:'tag-ex', label:'Molntjänst otillgänglig',
+      builtin:[],
+      sols:[
+        {name:'Extern SQL-kopia via Fabric Pipeline', desc:'Med en aktiv pipeline finns Dataverse-datan speglad i en extern SQL-databas, oberoende av Power Platform. Strukturerad data är enklare att hantera manuellt jämfört med filbaserade system.', rpo:'Beroende på exportstrategi', rto:'Rådata: dagar om export finns. Fungerande applikation: eget projekt.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link docs'}
+      ],
+      yes:['Strukturerad data läsbar utan Power Platform, om SQL-export är aktiv','Mer tillgänglig rådata jämfört med filbaserade system'],
+      no:['Fungerande applikation utan Microsoft','Data utanför exportkonfigurationen','Automatiseringar beroende av Power Platform'],
+      gaps:[
+        {t:'Exportarkitektur måste finnas på plats innan en incident', d:'Utan en aktiv pipeline finns ingen extern kopia. Det bör beslutas vilken data som är kritisk att bevara och hur den exporteras.', url:'', lbl:''},
+        {t:'Applikationen kan inte återuppbyggas som en DR-åtgärd', d:'Komplexa lösningar i Power Platform kan ta lång tid att migrera. Att återuppbygga på ny plattform är ett eget projekt.', url:'', lbl:''}
+      ],
+      critical: true
     }
   }
 };
 
-function pickSys(sys) {
-  state.sys = sys;
-  state.rto = null;
-  state.scope = null;
-  state.ext = null;
-
-  document.getElementById('sys-m365').classList.toggle('active', sys === 'm365');
-  document.getElementById('sys-dv').classList.toggle('active', sys === 'dv');
-  document.getElementById('sys-m365').classList.toggle('dimmed', sys === 'dv');
-  document.getElementById('sys-dv').classList.toggle('dimmed', sys === 'm365');
-
-  renderQuestions();
-  renderResult();
+function pickSys(sys){
+  S.sys=sys; S.critical=null; S.time=null; S.scenario=null;
+  document.getElementById('sys-m365').classList.toggle('active',sys==='m365');
+  document.getElementById('sys-dv').classList.toggle('active',sys==='dv');
+  document.getElementById('sys-m365').classList.toggle('dimmed',sys==='dv');
+  document.getElementById('sys-dv').classList.toggle('dimmed',sys==='m365');
+  renderQ(); renderR();
 }
+function pickA(qid,val){S[qid]=val; renderQ(); renderR();}
 
-function renderQuestions() {
-  const body = document.getElementById('q-body');
-  const qs = Q[state.sys];
-  let html = '';
-  qs.forEach((q, i) => {
-    html += `<div class="q-block">`;
-    if (i > 0) html += `<div class="divider"></div>`;
-    html += `<div class="answer-head">${q.head}</div>`;
-    html += `<div class="answer-sub">${q.sub}</div>`;
-    html += `<div class="answer-group">`;
-    q.answers.forEach(a => {
-      const sel = state[q.id] === a.val ? 'selected' : '';
-      html += `<button class="answer-btn ${sel}" onclick="pickAnswer('${q.id}','${a.val}')">${a.label}<span class="ex">${a.ex}</span></button>`;
+function renderQ(){
+  const body=document.getElementById('q-body');
+  if(!S.sys){body.innerHTML='<div class="placeholder">Välj ett system till vänster.</div>';return;}
+  let html='';
+  Q[S.sys].forEach((q,i)=>{
+    if(i>0) html+='<div class="divider"></div>';
+    html+=`<div class="q-block"><div class="q-head">${q.head}</div><div class="q-sub">${q.sub}</div><div class="answer-group">`;
+    q.answers.forEach(a=>{
+      const sel=S[q.id]===a.val?'selected':'';
+      html+=`<button class="answer-btn ${sel}" onclick="pickA('${q.id}','${a.val}')">${a.label}<span class="ex">${a.ex}</span></button>`;
     });
-    html += `</div></div>`;
+    html+='</div></div>';
   });
-  body.innerHTML = html;
+  body.innerHTML=html;
 }
 
-function pickAnswer(qid, val) {
-  state[qid] = val;
-  renderQuestions();
-  renderResult();
-}
+function renderR(){
+  const body=document.getElementById('result-body');
+  if(!S.sys||!S.scenario){body.innerHTML='<div class="placeholder">Svara på frågorna i mitten så visas lösningar och täckning här.</div>';return;}
+  const r=R[S.sys][S.scenario];
+  if(!r) return;
+  let html='';
+  html+=`<span class="level-tag ${r.tag}">${r.label}</span>`;
 
-function renderResult() {
-  const body = document.getElementById('result-body');
-  if (!state.sys || !state.scope) {
-    body.innerHTML = `<div class="result-placeholder"><div class="icon">→</div>Svara på frågorna i mitten så visas lösningar och täckning här.</div>`;
-    return;
+  if(S.critical==='yes' && r.critical){
+    html+=`<div class="rsec"><div class="rsec-label">Kritisk data</div><div class="critical-card"><div class="critical-title">Data som inte får gå förlorad kräver ett eget beslut</div><div class="critical-desc">Backup och DR skyddar mot förlust inom definierade tidsramar, men för data som är absolut kritisk för verksamhetens existens krävs ett aktivt beslut om vilken data det gäller, var den lagras och hur den verifieras. Det bör behandlas som ett separat krav utanför det ordinarie DR-ramverket.</div></div></div>`;
   }
 
-  const r = RESULTS[state.sys][state.scope];
-  if (!r) return;
-
-  let html = '';
-
-  html += `<span class="level-tag ${r.tag}">${r.label}</span>`;
-
-  html += `<div class="rsec"><div class="rsec-label">Teknisk lösning</div>`;
-  r.sols.forEach(s => {
-    html += `<div class="sol-card">
-      <div class="sol-name">${s.name}</div>
-      <div class="sol-desc">${s.desc}</div>
-      <div class="sol-kv">
-        <div class="kv"><div class="kk">RPO</div><div class="kv-v">${s.rpo}</div></div>
-        <div class="kv"><div class="kk">RTO</div><div class="kv-v">${s.rto}</div></div>
-      </div>
-      ${s.url ? `<a class="doc-link" href="${s.url}" target="_blank">↗ ${s.lbl}</a>` : ''}
-    </div>`;
-  });
-  html += `</div>`;
-
-  if (r.yes.length || r.no.length) {
-    html += `<div class="rsec"><div class="rsec-label">Täckning</div>`;
-    if (r.yes.length) {
-      html += `<div class="cov-block green"><div class="cov-head green"><div class="cov-dot dot-g"></div>Skyddar mot</div>`;
-      r.yes.forEach(y => { html += `<div class="cov-item green"><span class="cov-mk">✓</span><span>${y}</span></div>`; });
-      html += `</div>`;
-    }
-    if (r.no.length) {
-      html += `<div class="cov-block red"><div class="cov-head red"><div class="cov-dot dot-r"></div>Skyddar inte mot</div>`;
-      r.no.forEach(n => { html += `<div class="cov-item red"><span class="cov-mk">×</span><span>${n}</span></div>`; });
-      html += `</div>`;
-    }
-    html += `</div>`;
-  }
-
-  if (r.gaps.length) {
-    html += `<div class="rsec"><div class="rsec-label">Gap och beslutspunkter</div>`;
-    r.gaps.forEach(g => {
-      html += `<div class="gap-card"><div class="gap-t">${g.t}</div><div class="gap-d">${g.d}</div>${g.url ? `<a class="gap-link" href="${g.url}" target="_blank">↗ ${g.lbl}</a>` : ''}</div>`;
+  if(r.builtin && r.builtin.length){
+    html+=`<div class="rsec"><div class="rsec-label">Inbyggt skydd</div>`;
+    r.builtin.forEach(b=>{
+      html+=`<div class="builtin-card"><div class="builtin-name">${b.name}${b.preview?'<span class="preview-badge">Preview</span>':''}</div><div class="builtin-desc">${b.desc}</div>${b.url?`<a class="doc-link" href="${b.url}" target="_blank">↗ ${b.lbl}</a>`:''}</div>`;
     });
-    html += `</div>`;
+    html+='</div>';
   }
 
-  body.innerHTML = html;
+  if(r.sols && r.sols.length){
+    html+=`<div class="rsec"><div class="rsec-label">Tilläggslösning</div>`;
+    r.sols.forEach(s=>{
+      html+=`<div class="sol-card"><div class="sol-name">${s.name}</div><div class="sol-desc">${s.desc}</div><div class="sol-kv"><div class="kv"><div class="kk">RPO</div><div class="kv-v">${s.rpo}</div></div><div class="kv"><div class="kk">RTO</div><div class="kv-v">${s.rto}</div></div></div>${s.url?`<a class="doc-link" href="${s.url}" target="_blank">↗ ${s.lbl}</a>`:''}</div>`;
+    });
+    html+='</div>';
+  }
+
+  if(r.yes.length||r.no.length){
+    html+=`<div class="rsec"><div class="rsec-label">Täckning</div>`;
+    if(r.yes.length){html+=`<div class="cov-block green"><div class="cov-head green"><div class="cov-dot dot-g"></div>Skyddar mot</div>`;r.yes.forEach(y=>{html+=`<div class="cov-item green"><span class="cov-mk">✓</span><span>${y}</span></div>`;});html+='</div>';}
+    if(r.no.length){html+=`<div class="cov-block red"><div class="cov-head red"><div class="cov-dot dot-r"></div>Skyddar inte mot</div>`;r.no.forEach(n=>{html+=`<div class="cov-item red"><span class="cov-mk">×</span><span>${n}</span></div>`;});html+='</div>';}
+    html+='</div>';
+  }
+
+  if(r.gaps && r.gaps.length){
+    html+=`<div class="rsec"><div class="rsec-label">Gap och beslutspunkter</div>`;
+    r.gaps.forEach(g=>{html+=`<div class="gap-card"><div class="gap-t">${g.t}</div><div class="gap-d">${g.d}</div>${g.url?`<a class="gap-link" href="${g.url}" target="_blank">↗ ${g.lbl}</a>`:''}</div>`;});
+    html+='</div>';
+  }
+
+  body.innerHTML=html;
 }
 </script>
 </body>
