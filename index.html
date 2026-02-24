@@ -286,7 +286,7 @@ const R = {
       tag:'tag-op', label:'Operativ',
       builtin:[
         {name:'Inbyggd Dataverse-systembackup', desc:'Daglig fullbackup per miljö med 28 dagars retention. Ingen extra konfiguration krävs. Återställning sker till sandbox och promotas manuellt till produktion. Granulär återställning per post stöds inte.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup'},
-        {name:'Deleted records, preview', desc:'Återställning av enstaka raderade poster direkt i applikationen. Finns i preview men är ännu inte tillgängligt i alla regioner.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/restore-deleted-table-records', lbl:'Deleted records docs', preview:true}
+        {name:'Deleted records, preview', desc:'Återställning av enstaka raderade poster direkt i applikationen. Finns i preview men är ännu inte tillgängligt i alla regioner.', url:'https://learn.microsoft.com/en-us/power-platform/admin/restore-deleted-table-records', lbl:'Deleted records docs', preview:true}
       ],
       sols:[],
       yes:['Felkonfiguration och oavsiktlig radering','Trasigt flöde eller bulk-operation som förstör data','Korruption inom 28 dagar'],
@@ -300,12 +300,12 @@ const R = {
       ],
       sols:[
         {name:'Schemalagd SQL-export via Dataverse', desc:'Dataverse exponerar ett SQL-kompatibelt gränssnitt som går att fråga precis som en vanlig databas. Ett schemalagt jobb kan exportera valda tabeller till en on-prem eller extern SQL-databas via befintlig VPN-anslutning. Data hamnar utanför Microsofts ekosystem och är oberoende av Power Platform.', rpo:'Beroende på schemaläggning', rto:'Beroende på exportuppsättning och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/developer/data-platform/dataverse-sql-query', lbl:'Dataverse SQL-gränssnitt'},
-        {name:'Azure Synapse Link till extern lagring', desc:'Azure Synapse Link exporterar Dataverse-data till din egen lagring, till exempel Azure Data Lake eller on-prem SQL. Refresh var 15:e minut med inbyggd change tracking och granulär kontroll över vilka tabeller som exporteras.', rpo:'Ca 15 minuter', rto:'Beroende på exportuppsättning och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'}
+        {name:'Azure Synapse Link till extern lagring', desc:'Azure Synapse Link exporterar Dataverse-data till din egen lagring, till exempel Azure Data Lake eller on-prem SQL. Refresh var 15:e minut med inbyggd change tracking och granulär kontroll över vilka tabeller som exporteras.', rpo:'Ca 15 minuter', rto:'Beroende på exportuppsättning och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-data-lake', lbl:'Azure Synapse Link docs'}
       ],
       yes:['Strukturerad data exporterad externt och oberoende av Dataverse','Manipulation som pågått längre än 28 dagar, om export är aktiv','Granulär kontroll över vilka tabeller som skyddas'],
       no:['Data utanför exportuppsättningen','Fungerande applikation utan Microsoft'],
       gaps:[
-        {t:'Exportarkitektur måste designas och implementeras', d:'Beslut krävs om vilka tabeller som exporteras, med vilken frekvens och till vilken miljö. Fabric Link ger inte en extern backup eftersom data stannar inom Dataverse.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'},
+        {t:'Exportarkitektur måste designas och implementeras', d:'Beslut krävs om vilka tabeller som exporteras, med vilken frekvens och till vilken miljö. Fabric Link ger inte en extern backup eftersom data stannar inom Dataverse.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-data-lake', lbl:'Azure Synapse Link docs'},
         {t:'28-dagarsgapet kvarstår utan extern export', d:'Utan Azure Synapse Link eller liknande exportlösning saknas backup av Dataverse-data utanför Microsoft.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup docs'}
       ]
     },
@@ -346,7 +346,7 @@ const R = {
         name:'Export av transformerad data till extern lagring',
         desc:'Unik bearbetad data som inte finns i källsystemen bör exporteras regelbundet till extern lagring, till exempel ADLS eller on-prem SQL. Det är det enda sättet att skydda transformerad data utanför Fabric.',
         rpo:'Beroende på exportfrekvens', rto:'Beroende på exportuppsättning',
-        url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Data Lake Storage'
+        url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-data-lake', lbl:'Azure Data Lake Storage'
       }],
       yes:['Manipulation av SQL-data inom retentionperioden','Komprometterad pipeline-kod via Git-historik'],
       no:['Manipulation utanför retentionperioden','Unik transformerad data utan extern export','Analytisk data i Fabric utan kopia'],
