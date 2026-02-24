@@ -299,7 +299,8 @@ const R = {
         {name:'Inbyggd Dataverse-systembackup', desc:'Täcker manipulation inom 28 dagar. Utanför det fönstret finns ingen inbyggd lösning.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup'}
       ],
       sols:[
-        {name:'Azure Synapse Link till extern lagring', desc:'Azure Synapse Link exporterar Dataverse-data till din egen lagring, Azure Data Lake Gen2 eller on-prem SQL via pipeline. Data hamnar utanför Microsofts ekosystem och är oberoende av Power Platform. Refresh var 15:e minut, granulär kontroll över vilka tabeller som exporteras. Det är detta som ger en faktisk extern backup, inte Fabric Link som håller data kvar inom Dataverse.', rpo:'Ca 15 minuter', rto:'Beroende på exportuppsättning och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'}
+        {name:'Schemalagd SQL-export via Dataverse', desc:'Dataverse exponerar ett SQL-kompatibelt gränssnitt som går att fråga precis som en vanlig databas. Ett schemalagt jobb kan exportera valda tabeller till en on-prem eller extern SQL-databas via befintlig VPN-anslutning. Data hamnar utanför Microsofts ekosystem och är oberoende av Power Platform.', rpo:'Beroende på schemaläggning', rto:'Beroende på exportuppsättning och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/developer/data-platform/dataverse-sql-query', lbl:'Dataverse SQL-gränssnitt'},
+        {name:'Azure Synapse Link till extern lagring', desc:'Azure Synapse Link exporterar Dataverse-data till din egen lagring, till exempel Azure Data Lake eller on-prem SQL. Refresh var 15:e minut med inbyggd change tracking och granulär kontroll över vilka tabeller som exporteras.', rpo:'Ca 15 minuter', rto:'Beroende på exportuppsättning och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'}
       ],
       yes:['Strukturerad data exporterad externt och oberoende av Dataverse','Manipulation som pågått längre än 28 dagar, om export är aktiv','Granulär kontroll över vilka tabeller som skyddas'],
       no:['Data utanför exportuppsättningen','Fungerande applikation utan Microsoft'],
@@ -312,7 +313,7 @@ const R = {
       tag:'tag-ex', label:'Strategisk',
       builtin:[],
       sols:[
-        {name:'Extern kopia via Azure Synapse Link', desc:'Med en aktiv export finns Dataverse-datan i din egen lagring, oberoende av Power Platform. Strukturerad data i strukturerat format som kan läsas i SQL är enklare att hantera manuellt jämfört med filbaserade system. Fabric Link ger inte detta eftersom data stannar i Dataverse.', rpo:'Beroende på exportuppsättning', rto:'Rådata: dagar om export finns. Fungerande applikation: eget projekt.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'}
+        {name:'Extern kopia via SQL-export eller Azure Synapse Link', desc:'Med en aktiv export finns Dataverse-datan i din egen lagring, oberoende av Power Platform. En schemalagd SQL-export via Dataverse SQL-gränssnittet eller Azure Synapse Link ger båda en extern kopia. Strukturerad data i SQL är enklare att hantera manuellt jämfört med filbaserade system.', rpo:'Beroende på exportuppsättning', rto:'Rådata: dagar om export finns. Fungerande applikation: eget projekt.', url:'https://learn.microsoft.com/en-us/power-apps/developer/data-platform/dataverse-sql-query', lbl:'Dataverse SQL-gränssnitt'}
       ],
       yes:['Strukturerad data läsbar utan Power Platform, om SQL-export är aktiv','Mer tillgänglig rådata jämfört med filbaserade system'],
       no:['Fungerande applikation utan Microsoft','Data utanför exportuppsättningen','Automatiseringar beroende av Power Platform'],
@@ -362,7 +363,7 @@ const R = {
       }],
       yes:['Kod och konfiguration tillgänglig via Git oberoende av Fabric','Miljön kan återskapas när plattformen är uppe igen'],
       no:['Analytiska rapporter och dashboards utan alternativ plattform','Unik transformerad data utan extern export'],
-      gaps:[{t:'Ingen alternativ analytisk plattform ingår', d:'Om Fabric är otillgängligt finns ingen inbyggd failover för analytiska miljöer. Det kräver ett separat beslut om alternativ eller accepterad stilleståndstid.', url:'', lbl:''}],
+      gaps:[{t:'Ingen alternativ analytisk plattform ingår', d:'Om Fabric är otillgängligt finns ingen inbyggd failover för analytiska miljöer. Det kräver ett separat beslut om alternativ eller accepterad driftstopp.', url:'', lbl:''}],
       critical:true
     }
   },
