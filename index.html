@@ -245,7 +245,7 @@ const R = {
       ],
       sols:[
         {name:'Microsoft 365 Backup', desc:'Microsofts inbyggda backup-tjänst med RPO 10 minuter. Restore sker inom Microsofts datacenter utan att data behöver traversera internet, vilket ger hög restore-hastighet. Täcker SharePoint, OneDrive och Exchange. Data stannar inom Microsofts ekosystem.', rpo:'10 minuter', rto:'Upp till 1 000 sajter eller konton i parallell, 1-3 TB per timme vid bulk-restore (Microsofts benchmarks)', url:'https://learn.microsoft.com/en-us/microsoft-365/backup/backup-overview', lbl:'Microsoft 365 Backup docs'},
-        {name:'Veeam Backup for Microsoft 365', desc:'Data lagras externt och oberoende av Microsoft-tenanten, vilket är styrkan. Restore-hastigheten begränsas av tillgänglig bandbredd och Microsofts API-begränsningar vid återläsning. Täcker SharePoint, OneDrive, Exchange och Teams kanalmeddelanden. Obs: 1:1-chattar och gruppchatter backas inte upp.', rpo:'Konfigurerbart, dagligen som standard', rto:'Beroende på bandbredd och scope', url:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl:'Veeam BM365'}
+        {name:'Veeam Backup for Microsoft 365', desc:'Data lagras externt och oberoende av Microsoft-tenanten, vilket är styrkan. Restore-hastigheten begränsas av tillgänglig bandbredd och Microsofts API-begränsningar vid återläsning. Täcker SharePoint, OneDrive, Exchange och Teams kanalmeddelanden. Observera att 1:1-chattar och gruppchattar inte täcks här.', rpo:'Konfigurerbart, dagligen som standard', rto:'Beroende på bandbredd och scope', url:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl:'Veeam BM365'}
       ],
       yes:['Oavsiktlig radering och korruption','Felkonfiguration som raderar eller exponerar data','Komprometterat konto med kortvarig attack'],
       no:['Angrepp med lång inkubationstid','Molntjänsten otillgänglig'],
@@ -363,7 +363,7 @@ const R = {
       }],
       yes:['Kod och konfiguration tillgänglig via Git oberoende av Fabric','Miljön kan återskapas när plattformen är uppe igen'],
       no:['Analytiska rapporter och dashboards utan alternativ plattform','Unik transformerad data utan extern export'],
-      gaps:[{t:'Ingen alternativ analytisk plattform ingår', d:'Om Fabric är otillgängligt finns ingen inbyggd failover för analytiska miljöer. Det kräver ett separat beslut om alternativ eller accepterad driftstopp.', url:'', lbl:''}],
+      gaps:[{t:'Ingen alternativ analytisk plattform ingår', d:'Om Fabric är otillgängligt finns ingen inbyggd failover för analytiska miljöer. Det kräver ett separat beslut om alternativ eller accepterat driftstopp.', url:'', lbl:''}],
       critical:true
     }
   },
