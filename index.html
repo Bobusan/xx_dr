@@ -113,14 +113,20 @@ header{background:#fff;border-bottom:3px solid var(--brand);padding:14px 32px;di
     <div class="col-head"><div class="col-num">1</div><div class="col-title">Vilket system?</div></div>
     <div class="col-body">
       <div class="card" id="sys-m365" onclick="pickSys('m365')">
-        <div class="card-label">Samarbete och kommunikation</div>
         <div class="card-title">Microsoft 365</div>
         <div class="card-desc">SharePoint, OneDrive och Exchange Online.</div>
       </div>
       <div class="card" id="sys-dv" onclick="pickSys('dv')">
-        <div class="card-label">Affärssystem och appar</div>
-        <div class="card-title">Dynamics 365 och Power Platform</div>
+        <div class="card-title">Dynamics 365</div>
         <div class="card-desc">Dataverse, Power Apps och Power Automate.</div>
+      </div>
+      <div class="card" id="sys-fabric" onclick="pickSys('fabric')">
+        <div class="card-title">Microsoft Fabric</div>
+        <div class="card-desc">SQL-databaser, analytiska arbetsytor, pipelines och notebooks.</div>
+      </div>
+      <div class="card" id="sys-devops" onclick="pickSys('devops')">
+        <div class="card-title">Azure DevOps</div>
+        <div class="card-desc">Kod, konfiguration, IaC och pipelines.</div>
       </div>
     </div>
   </div>
@@ -182,13 +188,57 @@ const Q = {
        {val:'ransomware', label:'Manipulation som pågått länge',              ex:'Data smygande ändrad under veckor eller månader'},
        {val:'outage',     label:'Molntjänsten otillgänglig',                  ex:'Power Platform otillgänglig för överskådlig tid'}
      ]}
+  ],
+  fabric:[
+    {id:'critical', head:'Finns det data i Fabric som inte går att återskapa från källsystemen?',
+     sub:'Transformerad och bearbetad data som inte finns någon annanstans är mer kritisk än rådata.',
+     answers:[
+       {val:'yes', label:'Ja, bearbetad data som är unik',        ex:'Aggregeringar, modeller eller data utan källkopia'},
+       {val:'no',  label:'Nej, allt kan återskapas från källan',  ex:'Rådata finns i Dataverse eller annan källa'}
+     ]},
+    {id:'time', head:'Hur lång tid kan data vara otillgänglig utan att det är katastrofalt?',
+     sub:'Sätter kravet på återställningstid.',
+     answers:[
+       {val:'hours', label:'Timmar',             ex:'Rapporter och analyser behövs löpande'},
+       {val:'weeks', label:'Dagar till veckor',   ex:'Analytiska miljöer kan vänta en period'},
+       {val:'months',label:'Veckor till månader', ex:'Historisk data kan rekonstrueras i efterhand'}
+     ]},
+    {id:'scenario', head:'Vad är det mest kritiska hotet?',
+     sub:'Välj det som känns mest relevant att skydda sig mot.',
+     answers:[
+       {val:'accidental', label:'Oavsiktlig radering eller felkonfiguration', ex:'Workspace raderat, pipeline förstört data'},
+       {val:'ransomware', label:'Manipulation eller angrepp över tid',        ex:'Data smygande förändrad i analytiska flöden'},
+       {val:'outage',     label:'Strategisk',                   ex:'Fabric otillgängligt för överskådlig tid'}
+     ]}
+  ],
+  devops:[
+    {id:'critical', head:'Finns det kod eller konfiguration som inte finns dokumenterad någon annanstans?',
+     sub:'Om svaret är ja är Git det enda skyddet.',
+     answers:[
+       {val:'yes', label:'Ja, viss kod och konfiguration saknar dokumentation', ex:'Manuella inställningar, lokala scripts'},
+       {val:'no',  label:'Nej, allt finns i repo och är versionshanterat',      ex:'IaC, pipelines och config i Git'}
+     ]},
+    {id:'time', head:'Hur länge kan miljöer vara nere utan att det är kritiskt?',
+     sub:'Påverkar hur snabbt återdriftsättning måste kunna ske.',
+     answers:[
+       {val:'hours', label:'Timmar',             ex:'Produktionsmiljöer med hög tillgänglighet'},
+       {val:'weeks', label:'Dagar till veckor',   ex:'Interna verktyg och testmiljöer'},
+       {val:'months',label:'Veckor till månader', ex:'Sällankörd infrastruktur'}
+     ]},
+    {id:'scenario', head:'Vad är det mest kritiska hotet?',
+     sub:'Välj det som känns mest relevant att skydda sig mot.',
+     answers:[
+       {val:'accidental', label:'Felaktig commit eller deploy som förstör miljön', ex:'IaC-körning med fel, oåterkallelig ändring'},
+       {val:'ransomware', label:'Taktisk',              ex:'Angripare modifierar kod eller CI/CD-flöde'},
+       {val:'outage',     label:'Strategisk',                      ex:'Microsoft-tjänsten nere, ingen kan deploya'}
+     ]}
   ]
 };
 
 const R = {
   m365:{
     accidental:{
-      tag:'tag-op', label:'Operativ återställning',
+      tag:'tag-op', label:'Operativ',
       builtin:[
         {name:'Versionshistorik och papperskorg', desc:'Inbyggt i SharePoint och OneDrive. Versionshistorik ger granulär återställning av enstaka filer. Papperskorg behåller raderat innehåll i 93 dagar.', url:'https://support.microsoft.com/en-us/office/restore-items-in-the-recycle-bin-that-were-deleted-from-sharepoint-or-teams-6df466b6-55f2-4898-8d6e-c0dff851a0be', lbl:'SharePoint återställning'},
         {name:'Microsofts plattformsbackup', desc:'Microsoft tar automatiska snapshots var 12:e timme med 14 dagars retention. Finns tillgänglig utan extra licens men ger inte granulär återställning.', url:'https://learn.microsoft.com/en-us/microsoft-365/enterprise/microsoft-365-backup-storage-explainer', lbl:'Plattformsbackup docs'}
@@ -202,7 +252,7 @@ const R = {
       gaps:[]
     },
     ransomware:{
-      tag:'tag-rw', label:'Ransomware och långvarigt angrepp',
+      tag:'tag-rw', label:'Taktisk',
       builtin:[
         {name:'Versionshistorik', desc:'Ger viss återställningsförmåga men kan manipuleras av en angripare med tillräckliga behörigheter. Bör inte vara enda skyddet mot riktade angrepp.', url:'https://learn.microsoft.com/en-us/sharepoint/document-library-versioning', lbl:'Versionshistorik docs'}
       ],
@@ -217,7 +267,7 @@ const R = {
       ]
     },
     outage:{
-      tag:'tag-ex', label:'Molntjänst otillgänglig',
+      tag:'tag-ex', label:'Strategisk',
       builtin:[],
       sols:[
         {name:'Extern backup, Veeam BM365', desc:'Filer från SharePoint, OneDrive och Exchange finns lagrade externt, oberoende av Microsoft. En fungerande arbetsplattform kräver ett separat beslut om alternativ.', rpo:'Beroende på senaste backup', rto:'Rådata: dagar. Fungerande miljö: eget projekt.', url:'https://www.veeam.com/products/saas/backup-microsoft-office-365.html', lbl:'Veeam BM365'}
@@ -233,7 +283,7 @@ const R = {
   },
   dv:{
     accidental:{
-      tag:'tag-op', label:'Operativ återställning',
+      tag:'tag-op', label:'Operativ',
       builtin:[
         {name:'Inbyggd Dataverse-systembackup', desc:'Daglig fullbackup per miljö med 28 dagars retention. Ingen extra konfiguration krävs. Återställning sker till sandbox och promotas manuellt till produktion. Granulär återställning per post stöds inte.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup'},
         {name:'Deleted records, preview', desc:'Återställning av enstaka raderade poster direkt i applikationen. Finns i preview men är ännu inte tillgängligt i alla regioner.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/restore-deleted-table-records', lbl:'Deleted records docs', preview:true}
@@ -244,25 +294,25 @@ const R = {
       gaps:[]
     },
     ransomware:{
-      tag:'tag-rw', label:'Manipulation och långvarigt angrepp',
+      tag:'tag-rw', label:'Taktisk',
       builtin:[
         {name:'Inbyggd Dataverse-systembackup', desc:'Täcker manipulation inom 28 dagar. Utanför det fönstret finns ingen inbyggd lösning.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup'}
       ],
       sols:[
-        {name:'Fabric Pipeline till extern SQL', desc:'Dataverse speglas till ett Fabric-workspace via Fabric Link. En Fabric Pipeline skriver till Azure SQL eller on-prem SQL via en data gateway. SQL-kopian är oberoende av Power Platform och kan backas upp externt med vanliga SQL-verktyg.', rpo:'Ca 1 timme', rto:'Beroende på exportstrategi och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link för Dataverse'}
+        {name:'Azure Synapse Link till extern lagring', desc:'Azure Synapse Link exporterar Dataverse-data till din egen lagring, Azure Data Lake Gen2 eller on-prem SQL via pipeline. Data hamnar utanför Microsofts ekosystem och är oberoende av Power Platform. Refresh var 15:e minut, granulär kontroll över vilka tabeller som exporteras. Det är detta som ger en faktisk extern backup, inte Fabric Link som håller data kvar inom Dataverse.', rpo:'Ca 15 minuter', rto:'Beroende på exportstrategi och målmiljö', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'}
       ],
-      yes:['Strukturerad data exporterad externt och oberoende av Dataverse','Manipulation som pågått längre än 28 dagar, om pipeline är aktiv'],
+      yes:['Strukturerad data exporterad externt och oberoende av Dataverse','Manipulation som pågått längre än 28 dagar, om export är aktiv','Granulär kontroll över vilka tabeller som skyddas'],
       no:['Data utanför exportkonfigurationen','Fungerande applikation utan Microsoft'],
       gaps:[
-        {t:'Fabric Pipeline finns inte på plats', d:'Behöver designas och implementeras. Beslut krävs om vilka tabeller som exporteras, med vilken frekvens och till vilken miljö.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link docs'},
-        {t:'28-dagarsgapet kvarstår utan pipeline', d:'Utan extern export saknas en komplett backup av Dataverse-data utanför Microsoft.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup docs'}
+        {t:'Exportarkitektur måste designas och implementeras', d:'Beslut krävs om vilka tabeller som exporteras, med vilken frekvens och till vilken miljö. Fabric Link ger inte en extern backup eftersom data stannar inom Dataverse.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'},
+        {t:'28-dagarsgapet kvarstår utan extern export', d:'Utan Azure Synapse Link eller liknande exportlösning saknas backup av Dataverse-data utanför Microsoft.', url:'https://learn.microsoft.com/en-us/power-platform/admin/backup-restore-environments', lbl:'Power Platform backup docs'}
       ]
     },
     outage:{
-      tag:'tag-ex', label:'Molntjänst otillgänglig',
+      tag:'tag-ex', label:'Strategisk',
       builtin:[],
       sols:[
-        {name:'Extern SQL-kopia via Fabric Pipeline', desc:'Med en aktiv pipeline finns Dataverse-datan speglad i en extern SQL-databas, oberoende av Power Platform. Strukturerad data är enklare att hantera manuellt jämfört med filbaserade system.', rpo:'Beroende på exportstrategi', rto:'Rådata: dagar om export finns. Fungerande applikation: eget projekt.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/azure-synapse-link-view-in-fabric', lbl:'Fabric Link docs'}
+        {name:'Extern kopia via Azure Synapse Link', desc:'Med en aktiv export finns Dataverse-datan i din egen lagring, oberoende av Power Platform. Strukturerad data i strukturerat format som kan läsas i SQL är enklare att hantera manuellt jämfört med filbaserade system. Fabric Link ger inte detta eftersom data stannar i Dataverse.', rpo:'Beroende på exportkonfiguration', rto:'Rådata: dagar om export finns. Fungerande applikation: eget projekt.', url:'https://learn.microsoft.com/en-us/power-apps/maker/data-platform/export-to-data-lake', lbl:'Azure Synapse Link docs'}
       ],
       yes:['Strukturerad data läsbar utan Power Platform, om SQL-export är aktiv','Mer tillgänglig rådata jämfört med filbaserade system'],
       no:['Fungerande applikation utan Microsoft','Data utanför exportkonfigurationen','Automatiseringar beroende av Power Platform'],
@@ -272,15 +322,96 @@ const R = {
       ],
       critical: true
     }
+  },
+  fabric:{
+    accidental:{
+      tag:'tag-op', label:'Operativ',
+      builtin:[
+        {name:'Automatisk backup med tidpunktsåterställning', desc:'Fabric SQL-databaser har automatisk backup med fullständig backup varje vecka, differential var 12:e timme och transaktionslogg var 10:e minut. Återställning till valfri punkt inom 7 dagar, utökningsbart till 35 dagar. Backuperna hanteras av Microsoft och kan inte nås direkt av admins.', url:'https://learn.microsoft.com/en-us/fabric/database/sql/backup', lbl:'Fabric SQL backup'},
+        {name:'Git-integration för kod och konfiguration', desc:'Pipelines, Notebooks och konfiguration versionshanteras via Git mot Azure DevOps eller GitHub. Kod kan återställas till valfri commit utan att data påverkas.', url:'https://learn.microsoft.com/en-us/fabric/cicd/git-integration/intro-to-git-integration', lbl:'Fabric Git-integration'}
+      ],
+      sols:[],
+      yes:['Oavsiktlig radering av SQL-databas inom retentionfönstret','Felaktig pipeline-körning som förstör SQL-data','Felaktig kod rullas tillbaka via Git'],
+      no:['Radering av hela workspace, kan inte återställas','Data i Fabric utan extern kopia','Manipulation utanför retentionfönstret'],
+      gaps:[{t:'Workspace-radering är oåterkalleligt', d:'Om ett workspace raderas försvinner alla databaser och kan inte återställas oavsett retentionperiod. Behörigheter och rutiner för workspace-hantering bör ses över.', url:'https://learn.microsoft.com/en-us/fabric/database/sql/restore', lbl:'Fabric restore docs'}]
+    },
+    ransomware:{
+      tag:'tag-rw', label:'Taktisk',
+      builtin:[
+        {name:'Automatisk backup med tidpunktsåterställning', desc:'Punkt-i-tid-återställning upp till 35 dagar ger möjlighet att återställa till en punkt före en manipulation. Backuperna hanteras av Microsoft och kan inte raderas av en admin.', url:'https://learn.microsoft.com/en-us/fabric/database/sql/backup', lbl:'Fabric SQL backup'},
+        {name:'Git-versionshistorik', desc:'All kod och konfiguration har full versionshistorik. En komprometterad pipeline kan rullas tillbaka till en känd version.', url:'https://learn.microsoft.com/en-us/fabric/cicd/git-integration/intro-to-git-integration', lbl:'Fabric Git-integration'}
+      ],
+      sols:[{
+        name:'Export av transformerad data till extern lagring',
+        desc:'Unik bearbetad data som inte finns i källsystemen bör exporteras regelbundet till extern lagring, till exempel ADLS eller on-prem SQL. Det är det enda sättet att skydda transformerad data utanför Fabric.',
+        rpo:'Beroende på exportfrekvens', rto:'Beroende på exportstrategi',
+        url:'https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction', lbl:'Azure Data Lake Storage'
+      }],
+      yes:['Manipulation av SQL-data inom retentionfönstret','Komprometterad pipeline-kod via Git-historik'],
+      no:['Manipulation utanför retentionfönstret','Unik transformerad data utan extern export','Analytisk data i Fabric utan kopia'],
+      gaps:[{t:'Transformerad data utan källkopia saknar externt skydd', d:'Data som enbart finns i Fabric och inte kan återskapas från källsystemen behöver en aktiv exportstrategi för att vara skyddad mot manipulation utanför retentionfönstret.', url:'', lbl:''}]
+    },
+    outage:{
+      tag:'tag-ex', label:'Strategisk',
+      builtin:[],
+      sols:[{
+        name:'Extern export och kod i Git',
+        desc:'Transformerad data som är affärskritisk bör finnas exporterad externt. Kod och konfiguration i Git är tillgänglig oberoende av Fabric. Miljön kan återskapas från IaC och pipelines när plattformen är tillgänglig igen.',
+        rpo:'Beroende på exportfrekvens', rto:'Kod och konfiguration: timmar. Data: beroende på exportstrategi.',
+        url:'', lbl:''
+      }],
+      yes:['Kod och konfiguration tillgänglig via Git oberoende av Fabric','Miljön kan återskapas när plattformen är uppe igen'],
+      no:['Analytiska rapporter och dashboards utan alternativ plattform','Unik transformerad data utan extern export'],
+      gaps:[{t:'Ingen alternativ analytisk plattform ingår', d:'Om Fabric är otillgängligt finns ingen inbyggd failover för analytiska miljöer. Det kräver ett separat beslut om alternativ eller accepterad stilleståndstid.', url:'', lbl:''}],
+      critical:true
+    }
+  },
+  devops:{
+    accidental:{
+      tag:'tag-op', label:'Operativ',
+      builtin:[
+        {name:'Git-versionshistorik', desc:'All kod i Azure DevOps har full versionshistorik. En felaktig commit eller deploy kan rullas tillbaka till valfri tidigare version.', url:'https://learn.microsoft.com/en-us/azure/devops/repos/git/undo', lbl:'Azure DevOps Git'},
+        {name:'Pipeline-historik och omköring', desc:'Varje pipeline-körning loggas och kan triggas om. IaC i Git innebär att en miljö kan återställas till känt läge genom att köra om en tidigare version.', url:'https://learn.microsoft.com/en-us/azure/devops/pipelines/build/history', lbl:'Pipeline-historik'}
+      ],
+      sols:[],
+      yes:['Felaktig commit som rullas tillbaka via Git','Felaktig deploy som återställs via pipeline-historik','IaC-miljö som återskapas från versionshanterad kod'],
+      no:['Manuella inställningar utanför IaC och Git','Data i driftsatta tjänster, täcks av respektive systems backup'],
+      gaps:[]
+    },
+    ransomware:{
+      tag:'tag-rw', label:'Taktisk',
+      builtin:[
+        {name:'Branch protection och pull request-krav', desc:'Skyddade branches med obligatoriska code reviews förhindrar att en angripare direkt kan pusha skadlig kod till produktionsbranchen.', url:'https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies', lbl:'Branch policies'},
+        {name:'Granskningsloggar i Azure DevOps', desc:'Alla ändringar i repos, pipelines och behörigheter loggas och kan användas för att spåra vad en angripare gjort.', url:'https://learn.microsoft.com/en-us/azure/devops/organizations/audit/azure-devops-auditing', lbl:'DevOps auditing'}
+      ],
+      sols:[],
+      yes:['Skadlig kod i repo identifierad och återställd via Git-historik','Komprometterad pipeline stoppad och återställd'],
+      no:['Skadlig kod som redan körts och påverkat driftsatta miljöer','Data i driftsatta tjänster påverkad av skadlig deploy'],
+      gaps:[{t:'En komprometterad pipeline kan ha kört skadlig kod i produktion', d:'Git-historiken visar vad som ändrats i koden men inte vad som hände när koden körde. Konsekvenserna i driftsatta miljöer hanteras av respektive systems backup och DR.', url:'', lbl:''}]
+    },
+    outage:{
+      tag:'tag-ex', label:'Strategisk',
+      builtin:[],
+      sols:[{
+        name:'Lokala kloner och manuell driftsättning',
+        desc:'Lokala kloner av repot säkerställer att kod och historik finns tillgängligt oberoende av Azure DevOps. Pipelines kan i nödfall köras manuellt, men det kräver att rutinen är känd och övad i förväg.',
+        rpo:'Beroende på senaste lokala klon', rto:'Manuell driftsättning: timmar, förutsatt att rutinen är förberedd.',
+        url:'', lbl:''
+      }],
+      yes:['Kod tillgänglig lokalt via Git-kloner','Möjlighet att deploya manuellt utan Azure DevOps'],
+      no:['Automatiserade pipelines och CI/CD-flöden','Arbetsflöden och projekthantering i Azure Boards'],
+      gaps:[{t:'Bör finnas en nödprocedur för manuell driftsättning', d:'Om Azure DevOps är otillgängligt stannar automatiserade deploys. En dokumenterad nödprocedur för manuell driftsättning av kritiska system bör finnas på plats.', url:'', lbl:''}],
+      critical:false
+    }
   }
 };
 
 function pickSys(sys){
   S.sys=sys; S.critical=null; S.time=null; S.scenario=null;
-  document.getElementById('sys-m365').classList.toggle('active',sys==='m365');
-  document.getElementById('sys-dv').classList.toggle('active',sys==='dv');
-  document.getElementById('sys-m365').classList.toggle('dimmed',sys==='dv');
-  document.getElementById('sys-dv').classList.toggle('dimmed',sys==='m365');
+  ['m365','dv','fabric','devops'].forEach(id=>{
+    document.getElementById('sys-'+id).classList.toggle('active',sys===id);
+    document.getElementById('sys-'+id).classList.toggle('dimmed',sys!==id);
+  });
   renderQ(); renderR();
 }
 function pickA(qid,val){S[qid]=val; renderQ(); renderR();}
@@ -311,6 +442,33 @@ function renderR(){
 
   if(S.critical==='yes' && r.critical){
     html+=`<div class="rsec"><div class="rsec-label">Kritisk data</div><div class="critical-card"><div class="critical-title">Data som inte får gå förlorad kräver ett eget beslut</div><div class="critical-desc">Backup och DR skyddar mot förlust inom definierade tidsramar, men för data som är absolut kritisk för verksamhetens existens krävs ett aktivt beslut om vilken data det gäller, var den lagras och hur den verifieras. Det bör behandlas som ett separat krav utanför det ordinarie DR-ramverket.</div></div></div>`;
+  }
+
+  if(S.time){
+    const timeCtx = {
+      hours:{
+        m365:{accidental:'Granulär återställning via Veeam BM365 möter ett RTO-krav på timmar. Bulk-restore via M365 Backup tar däremot 1-3 dagar och möter inte kravet vid storskalig incident.',ransomware:'Med ett tidskrav på timmar är extern immutable backup avgörande. Bulk-restore tar 1-3 dagar, men granulär återställning av enskilda filer och bibliotek via Veeam kan göras på timmar.',outage:'Ett tidskrav på timmar är svårt att möta vid en plattformsincident. Det kräver en alternativ arbetsplattform som är förbetedd och testad.'},
+        dv:{accidental:'Återställning via inbyggd Dataverse-backup tar tid eftersom den sker miljö för miljö och kräver manuell promotion till produktion. Räkna med timmar till en dag.',ransomware:'Med ett tidskrav på timmar bör Fabric Pipeline vara på plats och testad. En oprövad exportarkitektur ger längre RTO.',outage:'Ett tidskrav på timmar är svårt att möta vid en plattformsincident utan en förberedd alternativ miljö.'},
+        fabric:{accidental:'Punkt-i-tid-återställning i Fabric skapar en ny databas i samma workspace och kan ta timmar vid stora databaser. Testa återställningstiden i din miljö.',ransomware:'Med ett tidskrav på timmar är det viktigt att punkt-i-tid-återställning är testad och att exportarkitektur finns på plats för unik transformerad data.',outage:'Ett tidskrav på timmar är svårt att möta utan en alternativ analytisk plattform.'},
+        devops:{accidental:'Git-rollback och manuell pipeline-omköring kan göras på timmar om rutiner finns. Se till att rätt personer har behörighet och vet hur.',ransomware:'Identifiering och rollback av komprometterad kod kan göras snabbt, men konsekvenserna i driftsatta miljöer kan ta längre tid att åtgärda.',outage:'Manuell driftsättning utan Azure DevOps kräver att rutinen är känd och övad. Annars riskerar RTO att överstiga timmar.'}
+      },
+      weeks:{
+        m365:{accidental:'Ett RTO-krav på dagar till veckor möts av de flesta lösningar. M365 Backup bulk-restore på 1-3 dagar och Veeam granulär restore på timmar ligger båda inom ramen.',ransomware:'Dagar till veckor är ett realistiskt RTO för storskalig ransomware-återställning. Inbyggd M365 Backup och Veeam möter båda kravet.',outage:'Dagar till veckor är mer realistiskt vid en plattformsincident. Fokus bör vara på kommunikation och manuella rutiner under avbrottet.'},
+        dv:{accidental:'Inbyggd Dataverse-backup möter ett krav på dagar till veckor utan tilläggslösning.',ransomware:'Fabric Pipeline bör finnas på plats för att möta kravet om manipulationen pågått längre än 28 dagar.',outage:'Dagar till veckor är realistiskt om SQL-export finns. Utan export saknas data oberoende av tidskrav.'},
+        fabric:{accidental:'Punkt-i-tid-återställning upp till 35 dagar möter ett krav på dagar till veckor väl.',ransomware:'Dagar till veckor möts av punkt-i-tid-återställning om manipulationen är inom retentionfönstret.',outage:'Dagar till veckor ger tid att vänta på att plattformen återställs, men kräver att extern data finns om avbrottet drar ut.'},
+        devops:{accidental:'Git och pipeline-historik möter ett krav på dagar till veckor utan problem.',ransomware:'Dagar till veckor ger tid att identifiera och rulla tillbaka komprometterad kod.',outage:'Dagar till veckor är ett rimligt RTO för Azure DevOps-avbrott om manuella rutiner finns.'}
+      },
+      months:{
+        m365:{accidental:'Veckor till månader som RTO-krav innebär att inbyggt skydd som versionshistorik och papperskorg troligen räcker för de flesta scenarion.',ransomware:'Med veckor till månader som tolerans är det viktigaste att data finns tillgänglig, inte hur snabbt. Fokus bör vara på att säkerställa att retentionfönstret täcker inkubationstiden.',outage:'Veckor till månader som tolerans innebär att ett längre plattformsavbrott är accepterat. Kontrollera att SLA-avtal med Microsoft reflekterar förväntningarna.'},
+        dv:{accidental:'Veckor till månader som RTO-krav möts av inbyggd backup utan tilläggslösning.',ransomware:'Med lång tolerans är det viktigare att data finns tillgänglig utanför 28-dagarsfönstret än att återställningen är snabb.',outage:'Veckor till månader som tolerans innebär att ett Power Platform-avbrott är accepterat under en period.'},
+        fabric:{accidental:'Lång tolerans innebär att data kan rekonstrueras i efterhand. Git för kod och punkt-i-tid-återställning för SQL täcker de flesta behov.',ransomware:'Med lång tolerans är exportstrategi för unik data det viktigaste, inte återställningstiden.',outage:'Lång tolerans innebär att Fabric-avbrott kan hanteras genom att vänta på återställning, förutsatt att kritisk data finns exporterad.'},
+        devops:{accidental:'Lång tolerans innebär att manuell återuppbyggnad av miljöer är acceptabel. Git säkerställer att inget går förlorat.',ransomware:'Med lång tolerans finns tid att noggrant identifiera och rensa komprometterad kod.',outage:'Veckor till månader som tolerans innebär att Azure DevOps-avbrott hanteras med manuella rutiner utan tidskritisk press.'}
+      }
+    };
+    const ctx = timeCtx[S.time]?.[S.sys]?.[S.scenario];
+    if(ctx){
+      html+=`<div class="rsec"><div class="rsec-label">Tidskrav</div><div class="builtin-card" style="background:#f8faff;border-color:#cbd5e1;"><div class="builtin-desc" style="color:#334155;">${ctx}</div></div></div>`;
+    }
   }
 
   if(r.builtin && r.builtin.length){
